@@ -1,5 +1,7 @@
 name: uncertainty_aware_env
 channels:
+  - pytorch
+  - nvidia
   - conda-forge
   - defaults
 dependencies:
@@ -7,3 +9,16 @@ dependencies:
   - pandas
   - numpy
   - plotly
+  - matplotlib
+  - pip
+  - pip:
+    - torch>=2.1.0
+    - transformers>=4.36.0
+    - datasets
+    - accelerate
+    - wandb
+    - sentencepiece
+    - protobuf
+    - auto-gptq
+    - autoawq
+    - bitsandbytes
