@@ -1,10 +1,15 @@
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 def compute_calibration_metrics(confidences, accuracies, entropies, num_bins=15):
-    """Computes ECE, MCE, Brier Score, and Average Entropy."""
+    """Compute calibration metrics from prediction confidences, correctness labels, and entropies."""
     bin_boundaries = torch.linspace(0, 1, num_bins + 1, device=confidences.device)
 
     ece = torch.tensor(0.0, device=confidences.device)
@@ -34,7 +39,12 @@ def compute_calibration_metrics(confidences, accuracies, entropies, num_bins=15)
         "Avg_Entropy": entropies.mean().item()
     }
 
-def plot_reliability_diagram(confidences, accuracies, title="Reliability Diagram", num_bins=15):
+
+def plot_reliability_diagram(confidences, accuracies, save_path: str, title="Reliability Diagram", num_bins=15):
+    """Create and save a reliability diagram comparing average confidence and accuracy across bins."""
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
     confidences = confidences.cpu().numpy()
     accuracies = accuracies.cpu().numpy()
     bins = np.linspace(0, 1, num_bins + 1)
@@ -57,9 +67,15 @@ def plot_reliability_diagram(confidences, accuracies, title="Reliability Diagram
     plt.title(title)
     plt.legend()
     plt.grid(True, alpha=0.3)
-    plt.show()
+    plt.savefig(save_path)
+    plt.close()
 
-def plot_entropy(entropies, accuracies, title="Entropy Distribution"):
+
+def plot_entropy_distribution(entropies, accuracies, save_path: str, title="Entropy Distribution"):
+    """Create and save entropy histograms for correct and incorrect predictions."""
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
     e = entropies.cpu().numpy()
     a = accuracies.cpu().numpy()
     plt.figure(figsize=(6, 4))
@@ -69,4 +85,5 @@ def plot_entropy(entropies, accuracies, title="Entropy Distribution"):
     plt.ylabel('Density')
     plt.title(title)
     plt.legend()
-    plt.show()
+    plt.savefig(save_path)
+    plt.close()
