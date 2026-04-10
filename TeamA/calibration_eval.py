@@ -1,7 +1,11 @@
+import os
 import torch
 import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
+
+output_dir = os.path.join(os.path.dirname(__file__), "results")
+os.makedirs(output_dir, exist_ok=True)
 
 def compute_calibration_metrics(confidences, accuracies, entropies, num_bins=15):
     """Computes ECE, MCE, Brier Score, and Average Entropy."""
@@ -57,6 +61,7 @@ def plot_reliability_diagram(confidences, accuracies, title="Reliability Diagram
     plt.title(title)
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.savefig(os.path.join(output_dir, f"{title.replace(' ', '_')}_reliability_diagram.png"))
     plt.show()
 
 def plot_entropy(entropies, accuracies, title="Entropy Distribution"):
@@ -69,4 +74,5 @@ def plot_entropy(entropies, accuracies, title="Entropy Distribution"):
     plt.ylabel('Density')
     plt.title(title)
     plt.legend()
+    plt.savefig(os.path.join(output_dir, f"{title.replace(' ', '_')}_entropy_distribution.png"))
     plt.show()
