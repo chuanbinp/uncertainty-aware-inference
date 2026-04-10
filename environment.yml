@@ -21,3 +21,4 @@ dependencies:
     - pandas
     - plotly
     - huggingface_hub
+    - optimum
