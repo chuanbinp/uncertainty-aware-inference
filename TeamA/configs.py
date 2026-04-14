@@ -26,10 +26,12 @@ MODEL_REGISTRY = {
         "gptq_revision": "gptq-4bit-128g-actorder_True",  # ← add revision
         "description": "GPTQ INT4",
     },
-    "llama2-7b-gptq-int8": {
-        "hf_id": "PF-8-bit/Llama-2-7b-hf-gptq-8bit",
-        "quant_type": "gptq",
-        "bits": 8,
-        "description": "GPTQ INT8",
-    },
+    # BLOCKED: PF-8-bit/Llama-2-7b-hf-gptq-8bit repo deleted (404).
+    # Pending decision: substitute with similar quantized model, or locate another INT8 checkpoint.
+    # "llama2-7b-gptq-int8": {
+    #     "hf_id": "PF-8-bit/Llama-2-7b-hf-gptq-8bit",
+    #     "quant_type": "gptq",
+    #     "bits": 8,
+    #     "description": "GPTQ INT8",
+    # },
 }

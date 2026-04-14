@@ -3,9 +3,10 @@ import os
 import torch
 from transformers import (
     AutoModelForCausalLM, AutoTokenizer,
-    BitsAndBytesConfig, GPTQConfig,
+    BitsAndBytesConfig,
 )
 from awq import AutoAWQForCausalLM
+from gptqmodel import GPTQModel
 
 
 def _load_tokenizer(hf_id: str, hf_token: str | None, trust_remote_code: bool = False):
@@ -55,12 +56,11 @@ def _load_awq(hf_id, hf_token, **kwargs):
 
 def _load_gptq(hf_id, hf_token, bits, revision=None, **kwargs):
     tokenizer = _load_tokenizer(hf_id, hf_token, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
+    model = GPTQModel.from_quantized(
         hf_id,
         revision=revision,
         device_map={"": 0},
         trust_remote_code=True,
-        quantization_config=GPTQConfig(bits=bits, use_exllama=False),
         token=hf_token,
     )
     return model, tokenizer

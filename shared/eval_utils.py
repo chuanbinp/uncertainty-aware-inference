@@ -124,6 +124,7 @@ def eval_generative_qa(model, tokenizer, examples: list[dict]):
             outputs = model.generate(
                 input_ids,
                 max_new_tokens=MAX_GEN_TOKENS,
+                max_length=None,        # suppress conflict with model's generation_config
                 do_sample=False,
                 return_dict_in_generate=True,
                 output_scores=True,
