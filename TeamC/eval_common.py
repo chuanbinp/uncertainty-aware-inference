@@ -4,6 +4,9 @@ Shared evaluation logic for calibration experiments.
 Both eval_baseline.py (FP16) and eval_quantized.py (PTQ) import from here.
 """
 
+import matplotlib
+matplotlib.use("Agg")
+
 import re
 import sys
 import os
