@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -222,6 +223,15 @@ def generate_combined_html(df_metrics, output_file="pareto_comparison.html"):
     print(f"Generated {output_file}")
 
 if __name__ == "__main__":
-    df = json_dir_to_df("./updated_results")
-    if not df.empty: generate_combined_html(df)
-    else: print("No data.")
+    parser = argparse.ArgumentParser(description="Generate an HTML Pareto analysis from a folder of JSON results.")
+    parser.add_argument("results_folder", nargs="?", default="./updated_results",
+                        help="Path to the folder containing JSON result files (default: ./updated_results)")
+    parser.add_argument("--output", default="pareto_comparison.html",
+                        help="Output HTML file name or path")
+    args = parser.parse_args()
+
+    df = json_dir_to_df(args.results_folder)
+    if not df.empty:
+        generate_combined_html(df, args.output)
+    else:
+        print(f"No data found in '{args.results_folder}'.")

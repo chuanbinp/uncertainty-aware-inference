@@ -27,6 +27,11 @@ conda env create -f environment.yml
 conda activate uncertainty_aware_env
 ```
 
+After collecting JSON result files, generate the Pareto analysis HTML with:
+```bash
+python TeamC/pareto_script.py ./updated_results
+```
+
 ### 2. Weights & Biases (W&B) Tracking
 [https://wandb.ai/sm5916-columbia-university/Uncertainty-Aware-Inference](https://wandb.ai/sm5916-columbia-university/Uncertainty-Aware-Inference)   
 Log experimental results to the shared W&B project. Ensure you are logged in:
