@@ -2,11 +2,17 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+import glob
+from pathlib import Path
+import json
+
+
 
 def find_pareto_frontier(df: pd.DataFrame, 
                          throughput_col: str = 'tokens_per_second', 
                          accuracy_col: str = 'accuracy', 
-                         ece_col: str = 'ece') -> pd.DataFrame:
+                         ece_col: str = 'ece',
+                        ) -> pd.DataFrame:
     """
     Identifies Pareto-dominant configurations.
     Optimization goals: 
@@ -43,9 +49,10 @@ def find_pareto_frontier(df: pd.DataFrame,
 def plot_3d_pareto(df: pd.DataFrame, 
                    throughput_col: str = 'tokens_per_second', 
                    accuracy_col: str = 'accuracy', 
-                   ece_col: str = 'ece',
-                   model_col: str = 'model_name',
-                   config_col: str = 'quant_method'):
+                   ece_col: str = 'ECE',
+                   model_col: str = 'model',
+                   config_col: str = 'quant_method',
+                   dataset_col: str = "dataset"):
     """
     Generates an interactive 3D plot using Plotly to visualize the Pareto frontier.
     """
@@ -65,7 +72,7 @@ def plot_3d_pareto(df: pd.DataFrame,
         z=df_suboptimal[ece_col],
         mode='markers',
         name='Sub-optimal Configs',
-        text=df_suboptimal[model_col] + ' - ' + df_suboptimal[config_col],
+        text=df_suboptimal[model_col] + ' - ' + df_suboptimal[config_col] + ' [' + df_suboptimal[dataset_col] + ']',
         marker=dict(
             size=6,
             color='lightgray',
@@ -82,7 +89,7 @@ def plot_3d_pareto(df: pd.DataFrame,
         z=df_pareto[ece_col],
         mode='markers',
         name='Pareto Frontier',
-        text=df_pareto[model_col] + ' - ' + df_pareto[config_col],
+        text=df_pareto[model_col] + ' - ' + df_pareto[config_col] + ' [' + df_pareto[dataset_col] + ']',
         marker=dict(
             size=10,
             color=df_pareto[accuracy_col],
@@ -111,17 +118,38 @@ def plot_3d_pareto(df: pd.DataFrame,
 
     return fig
 
+def json_dir_to_df(folder_path, recursive=True):
+
+    folder = Path(folder_path)
+    pattern = "**/*.json" if recursive == True else "*.json"
+    files = list(folder.glob(pattern))
+
+    if len(files) == 0:
+
+        raise FileNotFoundError(f"No valid JSON files found in {folder_path}. Double check")
+    
+    entries = []
+
+    for file in files:
+
+        try:
+
+            with open(file) as f:    
+                data = json.load(f)
+            entries.append(data)
+        
+        except:
+            print(f"Skipping {file} due to some issue")
+    
+    output_df = pd.DataFrame(entries)
+    return output_df
+
+
 
 if __name__ == "__main__":
     # Mock data
-    data = {
-        'model_name': ['Llama-2-7B', 'Llama-2-7B', 'Mistral-7B', 'Mistral-7B', 'Llama-2-13B'],
-        'quant_method': ['FP16', 'GPTQ-INT4', 'FP16', 'AWQ-INT4', 'NF4'],
-        'tokens_per_second': [25.5, 65.2, 28.1, 70.4, 15.2],
-        'accuracy': [0.720, 0.715, 0.740, 0.730, 0.780],
-        'ece': [0.045, 0.082, 0.040, 0.065, 0.035]
-    }
-    df_metrics = pd.DataFrame(data)
+    folder_path = "./updated_results"
+    df_metrics = json_dir_to_df(folder_path)
     
     # Generate and show the plot
     fig = plot_3d_pareto(df_metrics)
