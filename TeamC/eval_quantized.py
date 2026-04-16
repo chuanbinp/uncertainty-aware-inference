@@ -28,13 +28,12 @@ def load_tokenizer(model_id: str):
 
 def load_gptq_model(cfg: dict):
     """Load a GPTQ-quantized model via transformers native GPTQConfig."""
-    from transformers import GPTQConfig
+    # from transformers import GPTQConfig
+    from gptqmodel import GPTQModel
 
-    gptq_config = GPTQConfig(bits=cfg["bits"], use_exllama=False)
-    model = AutoModelForCausalLM.from_pretrained(
+    model = GPTQModel.load(
         cfg["hf_model_id"],
         revision=cfg.get("gptq_revision"),
-        quantization_config=gptq_config,
         device_map="auto",
         torch_dtype=torch.float16,
     )
@@ -45,11 +44,16 @@ def load_gptq_model(cfg: dict):
 
 def load_awq_model(cfg: dict):
     """Load an AWQ-quantized model (quantization config embedded in model)."""
-    model = AutoModelForCausalLM.from_pretrained(
+
+    from awq import AutoAWQForCausalLM
+ 
+    model = AutoAWQForCausalLM.from_quantized(
         cfg["hf_model_id"],
-        device_map="auto",
+        fuse_layers=False,
         torch_dtype=torch.float16,
     )
+
+    model = model.model
     model.eval()
     tokenizer = load_tokenizer(cfg["hf_model_id"])
     return model, tokenizer
@@ -96,22 +100,22 @@ def main():
     cfg = QUANT_CONFIGS[args.config]
     datasets_to_run = list(DATASET_CONFIGS) if args.dataset == "all" else [args.dataset]
 
-    wandb = None
-    if not args.no_wandb:
-        import wandb as _wandb
-        wandb = _wandb
-        wandb.init(
-            project="Uncertainty-Aware-Inference",
-            config={
-                "model": "llama2-13b",
-                "team": "team-c",
-                "quant_method": cfg["quant_method"],
-                "precision": cfg["precision"],
-                "dataset": args.dataset,
-                "split": args.split,
-                "seed": SEED,
-            },
-        )
+    # wandb = None
+    # if not args.no_wandb:
+    #     import wandb as _wandb
+    #     wandb = _wandb
+    #     wandb.init(
+    #         project="Uncertainty-Aware-Inference",
+    #         config={
+    #             "model": "llama2-13b",
+    #             "team": "team-c",
+    #             "quant_method": cfg["quant_method"],
+    #             "precision": cfg["precision"],
+    #             "dataset": args.dataset,
+    #             "split": args.split,
+    #             "seed": SEED,
+    #         },
+    #     )
 
     print(f"Loading {args.config}: {cfg['hf_model_id']}...")
     loader = LOADERS[cfg["method"]]
@@ -130,11 +134,10 @@ def main():
         model_tag="llama2_13b",
         precision=cfg["precision"],
         quant_method=cfg["quant_method"],
-        wandb=wandb,
     )
 
-    if wandb:
-        wandb.finish()
+    # if wandb:
+    #     wandb.finish()
 
     print("\nDone. Results saved to", output_dir)
 

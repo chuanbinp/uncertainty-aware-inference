@@ -47,21 +47,21 @@ def main():
     datasets_to_run = list(DATASET_CONFIGS) if args.dataset == "all" else [args.dataset]
 
     wandb = None
-    if not args.no_wandb:
-        import wandb as _wandb
-        wandb = _wandb
-        wandb.init(
-            project="Uncertainty-Aware-Inference",
-            config={
-                "model": "llama2-13b",
-                "team": "team-c",
-                "quant_method": "fp16",
-                "precision": "fp16",
-                "dataset": args.dataset,
-                "split": args.split,
-                "seed": SEED,
-            },
-        )
+    # if not args.no_wandb:
+    #     import wandb as _wandb
+    #     wandb = _wandb
+    #     wandb.init(
+    #         project="Uncertainty-Aware-Inference",
+    #         config={
+    #             "model": "llama2-13b",
+    #             "team": "team-c",
+    #             "quant_method": "fp16",
+    #             "precision": "fp16",
+    #             "dataset": args.dataset,
+    #             "split": args.split,
+    #             "seed": SEED,
+    #         },
+    #     )
 
     print(f"Loading {MODEL_ID}...")
     model, tokenizer = load_model(MODEL_ID)
@@ -82,8 +82,8 @@ def main():
         wandb=wandb,
     )
 
-    if wandb:
-        wandb.finish()
+    # if wandb:
+    #     wandb.finish()
 
     print("\nDone. Results saved to", output_dir)
 

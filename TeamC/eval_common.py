@@ -23,8 +23,8 @@ MAX_GEN_TOKENS = 32
 DATASET_CONFIGS = {
     "arc_challenge": {"type": "multiple_choice", "hf_name": "allenai/ai2_arc", "hf_config": "ARC-Challenge"},
     "hellaswag":     {"type": "multiple_choice", "hf_name": "Rowan/hellaswag",  "hf_config": None},
-    "triviaqa":      {"type": "generative",      "hf_name": "trivia_qa",        "hf_config": "rc.nocontext"},
-    "nq":            {"type": "generative",      "hf_name": "nq_open",          "hf_config": None},
+    # "triviaqa":      {"type": "generative",      "hf_name": "trivia_qa",        "hf_config": "rc.nocontext"},
+    # "nq":            {"type": "generative",      "hf_name": "nq_open",          "hf_config": None},
 }
 
 

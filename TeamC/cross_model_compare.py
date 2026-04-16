@@ -24,8 +24,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 _PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 RESULTS_DIRS = [
-    os.path.join(_PROJECT_ROOT, "TeamA", "results"),
-    os.path.join(_PROJECT_ROOT, "TeamB", "results"),
+    # os.path.join(_PROJECT_ROOT, "TeamA", "results"),
+    # os.path.join(_PROJECT_ROOT, "TeamB", "results"),
     os.path.join(_PROJECT_ROOT, "TeamC", "results"),
 ]
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "results")

@@ -1,0 +1,45 @@
+# Team A — Calibration Evaluation
+# Runs one quantization config across hellaswag, triviaqa, pubmedqa.
+#
+# Configs (see TeamA/configs.py):
+#   llama2-7b-fp16       FP16 baseline     needs HF_TOKEN
+#   llama2-7b-nf4        NF4 bitsandbytes  needs HF_TOKEN
+#   llama2-7b-awq-int4   AWQ INT4          no token needed
+#   llama2-7b-gptq-int4  GPTQ INT4         no token needed
+#
+# Usage:
+#   python TeamA/run_eval.py
+#   HF_TOKEN=hf_... python TeamA/run_eval.py   # for gated models
+
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from TeamC.configs import MODEL_REGISTRY
+from shared.model_loader import load_model, free_model
+from shared.eval_utils import run_eval
+
+CONFIG_KEY = "llama2-13b-gptq-int8"
+MAX_SAMPLES = 1000
+SEED = 42
+
+OUTPUT_DIR = f"./updated_results/{CONFIG_KEY}"
+
+model, tokenizer = load_model(CONFIG_KEY, MODEL_REGISTRY)
+
+try:
+    run_eval(
+        model=model,
+        tokenizer=tokenizer,
+        datasets_to_run=["hellaswag", "triviaqa", "pubmedqa"],
+        max_samples=MAX_SAMPLES,
+        output_dir=OUTPUT_DIR,
+        model_tag="llama2-13b",
+        precision=MODEL_REGISTRY[CONFIG_KEY]["quant_type"],
+        quant_method=str(MODEL_REGISTRY[CONFIG_KEY]["bits"]) + "bit",
+        seed=SEED,
+    )
+finally:
+    free_model(model)

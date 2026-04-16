@@ -6,10 +6,10 @@ set -e
 
 cd "$(dirname "$0")"
 
-for config in gptq_int8 gptq_int4 awq_int4 bnb_nf4; do
+for config in bnb_nf4; do
     echo "=== Running: $config ==="
     python eval_quantized.py --config "$config" --dataset all --split validation
 done
 
 echo "=== Sweep complete. Running comparison ==="
-python cross_model_compare.py
+# python cross_model_compare.py
