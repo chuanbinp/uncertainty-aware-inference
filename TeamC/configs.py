@@ -56,7 +56,7 @@ MODEL_REGISTRY = {
         "description": "GPTQ INT8",
     },
     "llama2-13b-nf4": {
-        "hf_id": "TheBloke/Llama-2-13B-AWQ",
+        "hf_id": "meta-llama/Llama-2-13b-hf",
         "quant_type": "nf4",
         "bits": 4,
         "description": "NF4 (bitsandbytes 4-bit)",
