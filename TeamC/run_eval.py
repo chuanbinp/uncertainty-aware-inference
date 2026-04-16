@@ -22,7 +22,7 @@ from TeamC.configs import MODEL_REGISTRY
 from shared.model_loader import load_model, free_model
 from shared.eval_utils import run_eval
 
-CONFIG_KEY = "llama2-13b-gptq-int8"
+CONFIG_KEY = "llama2-13b-nf4"
 MAX_SAMPLES = 1000
 SEED = 42
 
