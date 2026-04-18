@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b",
+  "precision": "awq",
+  "quant_method": "4bit",
+  "dataset": "hellaswag",
+  "tokens_per_second": 1221.305678127591,
+  "accuracy": 0.8191595077514648,
+  "num_examples": 10042,
+  "ECE": 0.28249651112301943,
+  "MCE": 0.35189196799360756,
+  "Brier_Score": 0.20478035509586334,
+  "Avg_Entropy": 1.1136852502822876
+}
