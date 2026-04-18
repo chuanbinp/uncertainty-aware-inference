@@ -19,6 +19,7 @@ SEED = 42
 OUTPUT_DIR = f"./updated_results/{CONFIG_KEY}"
 
 model, tokenizer = load_model(CONFIG_KEY, MODEL_REGISTRY)
+tokenizer.pad_token = tokenizer.eos_token # to avoid warnings about no pad token during evaluation
 
 try:
     run_eval(
