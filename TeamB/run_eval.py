@@ -12,7 +12,7 @@ from TeamB.configs import MODEL_REGISTRY
 from shared.model_loader import load_model, free_model
 from shared.eval_utils import run_eval
 
-CONFIG_KEY = "mistral-7B-fp16"
+CONFIG_KEY = "mistral-7b-fp16"
 MAX_SAMPLES = None
 SEED = 42
 
