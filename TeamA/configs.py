@@ -1,37 +1,36 @@
 # TeamA/configs.py
 
 MODEL_REGISTRY = {
-    "llama2-7b-fp16": {
-        "hf_id": "meta-llama/Llama-2-7b-hf",
+    "llama1-7b-fp16": {
+        "hf_id": "huggyllama/llama-7b",
         "quant_type": "fp16",
         "bits": 16,
         "description": "FP16 Baseline",
     },
-    "llama2-7b-nf4": {
-        "hf_id": "meta-llama/Llama-2-7b-hf",
+    "llama1-7b-nf4": {
+        "hf_id": "huggyllama/llama-7b",
         "quant_type": "nf4",
         "bits": 4,
         "description": "NF4 (bitsandbytes 4-bit)",
     },
-    "llama2-7b-awq-int4": {
-        "hf_id": "TheBloke/Llama-2-7b-AWQ",
+    "llama1-7b-awq-int4": {
+        "hf_id": "TheBloke/LLaMA-7b-AWQ",
         "quant_type": "awq",
         "bits": 4,
         "description": "AWQ INT4",
     },
-    "llama2-7b-gptq-int4": {
-        "hf_id": "TheBloke/Llama-2-7B-GPTQ",
+    "llama1-7b-gptq-int4": {
+        "hf_id": "TheBloke/LLaMa-7B-GPTQ",
         "quant_type": "gptq",
         "bits": 4,
-        "gptq_revision": "gptq-4bit-128g-actorder_True",  # ← add revision
+        "gptq_revision": "gptq-4bit-128g-actorder_True",
         "description": "GPTQ INT4",
     },
-    # BLOCKED: PF-8-bit/Llama-2-7b-hf-gptq-8bit repo deleted (404).
-    # Pending decision: substitute with similar quantized model, or locate another INT8 checkpoint.
-    # "llama2-7b-gptq-int8": {
-    #     "hf_id": "PF-8-bit/Llama-2-7b-hf-gptq-8bit",
-    #     "quant_type": "gptq",
-    #     "bits": 8,
-    #     "description": "GPTQ INT8",
-    # },
+    "llama1-7b-gptq-int8": {
+        "hf_id": "TheBloke/LLaMa-7B-GPTQ",
+        "quant_type": "gptq",
+        "bits": 8,
+        "gptq_revision": "gptq-8bit-128g-actorder_True",
+        "description": "GPTQ INT8",
+    },
 }
