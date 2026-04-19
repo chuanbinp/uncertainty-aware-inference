@@ -59,7 +59,7 @@ def _load_gptq(hf_id, hf_token, bits, revision=None, **kwargs):
     model = GPTQModel.from_quantized(
         hf_id,
         revision=revision,
-        device_map={"": 0},
+        device_map="auto",
         trust_remote_code=True,
         token=hf_token,
     )
