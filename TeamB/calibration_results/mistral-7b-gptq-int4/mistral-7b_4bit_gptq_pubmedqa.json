@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b",
+  "precision": "gptq",
+  "quant_method": "4bit",
+  "dataset": "pubmedqa",
+  "tokens_per_second": 276.91729140134976,
+  "accuracy": 0.49300000071525574,
+  "num_examples": 1000,
+  "ECE": 0.07658198702335359,
+  "MCE": 0.3024217701620525,
+  "Brier_Score": 0.25162118673324585,
+  "Avg_Entropy": 0.9380746483802795
+}
