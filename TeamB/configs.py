@@ -24,7 +24,7 @@ MODEL_REGISTRY = {
         "hf_id": "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
         "quant_type": "gptq",
         "bits": 4,
-        "gptq_revision": "gptq-4bit-128g-actorder_True",
+        "gptq_revision": "main",
         "description": "GPTQ INT4",
         },
    
