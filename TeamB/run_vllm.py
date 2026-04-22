@@ -15,10 +15,31 @@ import argparse
 import json
 import logging
 import os
+import subprocess
 import time
 from pathlib import Path
 
 import torch
+
+
+def get_gpu_mem_gb() -> float:
+    """
+    Read actual GPU memory usage directly from the driver via nvidia-smi.
+    This is reliable regardless of which memory allocator is used (PyTorch,
+    vLLM's CUDA pool, bitsandbytes, etc.).
+    Returns 0.0 if nvidia-smi is unavailable.
+    """
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=10,
+        )
+        # Sum across all GPUs (handles multi-GPU setups)
+        mib_values = [float(x.strip()) for x in out.stdout.strip().splitlines() if x.strip()]
+        return sum(mib_values) / 1024.0  # MiB → GB
+    except Exception:
+        # Fallback to PyTorch allocator (less accurate for vLLM, but better than 0)
+        return torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -94,8 +115,10 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
         load_kwargs["quantization"] = cfg["quantization"]
     if cfg["revision"] is not None:
         load_kwargs["revision"] = cfg["revision"]
-    if hf_token:
-        load_kwargs["tokenizer_kwargs"] = {"token": hf_token}
+    # vLLM does not accept tokenizer_kwargs in LLM(). The correct approach is
+    # to set HF_TOKEN in the environment before calling LLM(), which the
+    # notebook already does via: os.environ["HF_TOKEN"] = HF_TOKEN
+    # No additional kwarg needed here.
 
     llm = LLM(**load_kwargs)
 
@@ -130,7 +153,9 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
         logger.info(f"  iter {i+1}: {iter_tok_per_sec[-1]:.1f} tok/s")
 
     avg_tok_per_sec = sum(iter_tok_per_sec) / len(iter_tok_per_sec)
-    peak_mem_gb     = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0
+    # Use nvidia-smi directly — vLLM allocates its own CUDA memory pool that
+    # bypasses torch.cuda.max_memory_allocated(), which would return 0.
+    peak_mem_gb = get_gpu_mem_gb()
 
     result = {
         "config_key":    config_key,
@@ -207,7 +232,8 @@ def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
             logger.info(f"  iter {i+1}: {iter_tok_per_sec[-1]:.1f} tok/s")
 
     avg_tok_per_sec = sum(iter_tok_per_sec) / len(iter_tok_per_sec)
-    peak_mem_gb     = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0
+    # nvidia-smi for consistency with vLLM configs
+    peak_mem_gb = get_gpu_mem_gb()
 
     result = {
         "config_key":       "mistral-7b-nf4",
