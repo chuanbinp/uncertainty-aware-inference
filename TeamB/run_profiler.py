@@ -195,14 +195,16 @@ def profile_inference_fixed(
     # for quantized layers (bitsandbytes, GPTQ) with device_map="auto".
     device    = (torch.device("cuda", torch.cuda.current_device())
                  if torch.cuda.is_available() else torch.device("cpu"))
-    inputs    = tokenizer(prompt, return_tensors="pt").to(device)
-    input_ids = inputs["input_ids"]
+    inputs         = tokenizer(prompt, return_tensors="pt").to(device)
+    input_ids      = inputs["input_ids"]
+    attention_mask = inputs["attention_mask"]
 
     # ── Warmup ────────────────────────────────────────────────────────────────
     logger.info(f"[{config_key}] Warmup ({warmup_steps} steps)...")
     for _ in range(warmup_steps):
         model.generate(
             input_ids=input_ids,
+            attention_mask=attention_mask,
             max_new_tokens=n_tokens,
             do_sample=False,
             pad_token_id=tokenizer.eos_token_id,
@@ -245,6 +247,7 @@ def profile_inference_fixed(
                 t0 = time.perf_counter()
                 model.generate(
                     input_ids=input_ids,
+                    attention_mask=attention_mask,
                     max_new_tokens=n_tokens,
                     do_sample=False,
                     pad_token_id=tokenizer.eos_token_id,
@@ -279,10 +282,32 @@ def profile_inference_fixed(
     # Peak memory tracked via torch.cuda (unaffected by profile_memory=False)
     mem_gb = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0
 
-    key_avgs           = prof.key_averages()
-    cuda_events        = [e for e in key_avgs if e.cuda_time_total > 0]
+    key_avgs = prof.key_averages()
+
+    # When Kineto CUDA backend fails to init, FunctionEventAvg objects only have
+    # cpu_time_total — cuda_time_total does not exist. Detect which mode we are in
+    # and fall back gracefully so the JSON is always written.
+    sample = key_avgs[0] if key_avgs else None
+    has_cuda_times = sample is not None and hasattr(sample, "cuda_time_total")
+
+    if has_cuda_times:
+        # Normal path: Kineto CUDA active, use CUDA kernel times
+        cuda_events     = [e for e in key_avgs if e.cuda_time_total > 0]
+        total_cuda_us   = sum(e.cuda_time_total for e in cuda_events)
+        top_kernels_raw = sorted(cuda_events, key=lambda e: e.cuda_time_total, reverse=True)[:10]
+        kernel_time_key = "cuda_time_total"
+    else:
+        # Fallback path: Kineto CUDA not available, use CPU-side times instead
+        logger.warning(
+            f"  [{config_key}] cuda_time_total unavailable (Kineto CUDA backend not active). "
+            f"Falling back to cpu_time_total for kernel stats."
+        )
+        cuda_events     = [e for e in key_avgs if e.cpu_time_total > 0]
+        total_cuda_us   = sum(e.cpu_time_total for e in cuda_events)
+        top_kernels_raw = sorted(cuda_events, key=lambda e: e.cpu_time_total, reverse=True)[:10]
+        kernel_time_key = "cpu_time_total"
+
     # key_averages() accumulates across ALL profile_steps — divide for per-step values
-    total_cuda_us      = sum(e.cuda_time_total for e in cuda_events)
     avg_cuda_us        = total_cuda_us / profile_steps
     total_flops_all    = sum(getattr(e, "flops", 0) or 0 for e in key_avgs)
     avg_flops_per_step = total_flops_all / profile_steps
@@ -296,16 +321,17 @@ def profile_inference_fixed(
         )
 
     # Arithmetic intensity: per-step FLOPs / peak bytes allocated (approximate proxy).
-    # True AI = FLOPs / bytes read from memory (bandwidth), not bytes allocated.
     arith_intensity = avg_flops_per_step / (mem_gb * 1e9) if mem_gb > 0 else 0.0
 
-    top_kernels_raw = sorted(cuda_events, key=lambda e: e.cuda_time_total, reverse=True)[:10]
+    def _kern_time(e):
+        return getattr(e, kernel_time_key)
 
     result = {
-        "config_key": config_key,
-        "hf_id":      cfg["hf_id"],
-        "quant_type": cfg["quant_type"],
-        "bits":       cfg["bits"],
+        "config_key":   config_key,
+        "hf_id":        cfg["hf_id"],
+        "quant_type":   cfg["quant_type"],
+        "bits":         cfg["bits"],
+        "kineto_cuda":  has_cuda_times,
         "timing": {
             "total_inference_ms": avg_ms,
             "tokens_per_second":  tps,
@@ -316,17 +342,17 @@ def profile_inference_fixed(
         },
         "compute": {
             "avg_cuda_ms":          avg_cuda_us / 1e3,
-            "total_cuda_ms":        total_cuda_us / 1e3,     # kept for compatibility
+            "total_cuda_ms":        total_cuda_us / 1e3,
             "avg_flops_per_step":   float(avg_flops_per_step),
-            "total_flops":          float(total_flops_all),  # kept for compatibility
+            "total_flops":          float(total_flops_all),
             "arithmetic_intensity": float(arith_intensity),
         },
         "top_kernels": [
             {
                 "name":         e.key,
-                "cuda_time_ms": e.cuda_time_total / profile_steps / 1e3,  # per-step avg
-                "pct":          e.cuda_time_total / total_cuda_us * 100 if total_cuda_us else 0,
-                "calls":        e.count // profile_steps,                  # per-step avg
+                "cuda_time_ms": _kern_time(e) / profile_steps / 1e3,
+                "pct":          _kern_time(e) / total_cuda_us * 100 if total_cuda_us else 0,
+                "calls":        e.count // profile_steps,
             }
             for e in top_kernels_raw
         ],
