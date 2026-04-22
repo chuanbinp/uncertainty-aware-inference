@@ -1,0 +1,362 @@
+{
+  "mistral-7b-fp16": {
+    "config_key": "mistral-7b-fp16",
+    "hf_id": "mistralai/Mistral-7B-Instruct-v0.2",
+    "quant_type": "fp16",
+    "bits": 16,
+    "kineto_cuda": false,
+    "timing": {
+      "total_inference_ms": 3720.331873000032,
+      "tokens_per_second": 13.439661220245005,
+      "all_step_ms": [
+        3707.487596999954,
+        3721.562891000076,
+        3729.8517360000005,
+        3715.8658850000847,
+        3726.8912560000445
+      ]
+    },
+    "memory": {
+      "peak_gpu_gb": 14.500046336
+    },
+    "compute": {
+      "avg_cuda_ms": 9538.33786179984,
+      "total_cuda_ms": 47691.6893089992,
+      "avg_flops_per_step": 836767758453.0,
+      "total_flops": 4183838792265.0,
+      "arithmetic_intensity": 57.707936861933625
+    },
+    "top_kernels": [
+      {
+        "name": "aten::linear",
+        "cuda_time_ms": 881.0226651999969,
+        "pct": 9.23664770492573,
+        "calls": 11250
+      },
+      {
+        "name": "inference_step_2",
+        "cuda_time_ms": 745.9866354000003,
+        "pct": 7.820929036154271,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_4",
+        "cuda_time_ms": 745.3983489999998,
+        "pct": 7.814761437474879,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_1",
+        "cuda_time_ms": 744.3339083999998,
+        "pct": 7.803601834875113,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_3",
+        "cuda_time_ms": 743.1928945999999,
+        "pct": 7.791639438317849,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_0",
+        "cuda_time_ms": 741.5253676,
+        "pct": 7.774157073736509,
+        "calls": 0
+      },
+      {
+        "name": "aten::matmul",
+        "cuda_time_ms": 738.119470800031,
+        "pct": 7.73844962816982,
+        "calls": 11300
+      },
+      {
+        "name": "cudaLaunchKernel",
+        "cuda_time_ms": 602.3128213999204,
+        "pct": 6.314651778190071,
+        "calls": 69459
+      },
+      {
+        "name": "aten::mm",
+        "cuda_time_ms": 511.6959096000165,
+        "pct": 5.364623449220762,
+        "calls": 11250
+      },
+      {
+        "name": "aten::mul",
+        "cuda_time_ms": 335.4070166000166,
+        "pct": 3.5164094778325126,
+        "calls": 14700
+      }
+    ]
+  },
+  "mistral-7b-gptq-int4": {
+    "config_key": "mistral-7b-gptq-int4",
+    "hf_id": "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
+    "quant_type": "gptq",
+    "bits": 4,
+    "kineto_cuda": false,
+    "timing": {
+      "total_inference_ms": 6029.755703400042,
+      "tokens_per_second": 8.292209910230051,
+      "all_step_ms": [
+        6040.3226549999545,
+        6022.721667000042,
+        6051.783522000051,
+        6021.227863000149,
+        6012.722810000014
+      ]
+    },
+    "memory": {
+      "peak_gpu_gb": 4.289812992
+    },
+    "compute": {
+      "avg_cuda_ms": 13640.266548399588,
+      "total_cuda_ms": 68201.33274199795,
+      "avg_flops_per_step": 836767758453.0,
+      "total_flops": 4183838792265.0,
+      "arithmetic_intensity": 195.0592624931376
+    },
+    "top_kernels": [
+      {
+        "name": "QuantLinearFunction",
+        "cuda_time_ms": 2583.0126873999725,
+        "pct": 18.936673108510753,
+        "calls": 11200
+      },
+      {
+        "name": "inference_step_2",
+        "cuda_time_ms": 1210.3822019999996,
+        "pct": 8.873596404477988,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_0",
+        "cuda_time_ms": 1208.0917708,
+        "pct": 8.856804715020363,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_1",
+        "cuda_time_ms": 1204.5639130000002,
+        "pct": 8.830941160320151,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_3",
+        "cuda_time_ms": 1204.2703114,
+        "pct": 8.828788697984036,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_4",
+        "cuda_time_ms": 1202.5609294,
+        "pct": 8.816256816778235,
+        "calls": 0
+      },
+      {
+        "name": "aten::matmul",
+        "cuda_time_ms": 726.4338210000132,
+        "pct": 5.325657078785206,
+        "calls": 11300
+      },
+      {
+        "name": "cudaLaunchKernel",
+        "cuda_time_ms": 629.7655135998212,
+        "pct": 4.616958996843882,
+        "calls": 72627
+      },
+      {
+        "name": "aten::mm",
+        "cuda_time_ms": 623.5674455999646,
+        "pct": 4.571519503576912,
+        "calls": 11250
+      },
+      {
+        "name": "aten::mul",
+        "cuda_time_ms": 318.59910879997227,
+        "pct": 2.335724948405451,
+        "calls": 14700
+      }
+    ]
+  },
+  "mistral-7b-gptq-int8": {
+    "config_key": "mistral-7b-gptq-int8",
+    "hf_id": "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
+    "quant_type": "gptq",
+    "bits": 8,
+    "kineto_cuda": false,
+    "timing": {
+      "total_inference_ms": 5999.248346000013,
+      "tokens_per_second": 8.334377428021861,
+      "all_step_ms": [
+        5927.7544609999495,
+        5887.145817999908,
+        6041.588628999989,
+        6103.22297200014,
+        6036.529850000079
+      ]
+    },
+    "memory": {
+      "peak_gpu_gb": 7.806736896
+    },
+    "compute": {
+      "avg_cuda_ms": 13638.15540340062,
+      "total_cuda_ms": 68190.7770170031,
+      "avg_flops_per_step": 836767758453.0,
+      "total_flops": 4183838792265.0,
+      "arithmetic_intensity": 107.18534127642259
+    },
+    "top_kernels": [
+      {
+        "name": "QuantLinearFunction",
+        "cuda_time_ms": 2577.6354312000126,
+        "pct": 18.900176416506365,
+        "calls": 11200
+      },
+      {
+        "name": "inference_step_3",
+        "cuda_time_ms": 1220.6629939999998,
+        "pct": 8.950352579907046,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_2",
+        "cuda_time_ms": 1208.3339348000002,
+        "pct": 8.859951357488614,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_4",
+        "cuda_time_ms": 1207.3230060000003,
+        "pct": 8.852538853597158,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_0",
+        "cuda_time_ms": 1185.5789994000002,
+        "pct": 8.693103754371215,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_1",
+        "cuda_time_ms": 1177.4471948,
+        "pct": 8.6334783551917,
+        "calls": 0
+      },
+      {
+        "name": "aten::matmul",
+        "cuda_time_ms": 728.3124832000202,
+        "pct": 5.340256520455973,
+        "calls": 11300
+      },
+      {
+        "name": "aten::mm",
+        "cuda_time_ms": 625.6557384000372,
+        "pct": 4.587539296142881,
+        "calls": 11250
+      },
+      {
+        "name": "cudaLaunchKernel",
+        "cuda_time_ms": 624.8314081999897,
+        "pct": 4.581495002206752,
+        "calls": 72627
+      },
+      {
+        "name": "aten::mul",
+        "cuda_time_ms": 319.78591220004563,
+        "pct": 2.3447885930402896,
+        "calls": 14700
+      }
+    ]
+  },
+  "mistral-7b-nf4": {
+    "config_key": "mistral-7b-nf4",
+    "hf_id": "mistralai/Mistral-7B-Instruct-v0.2",
+    "quant_type": "nf4",
+    "bits": 4,
+    "kineto_cuda": false,
+    "timing": {
+      "total_inference_ms": 7205.533238800036,
+      "tokens_per_second": 6.939111699709081,
+      "all_step_ms": [
+        7176.603678999982,
+        7234.9160079998,
+        7194.633430000067,
+        7198.071719999916,
+        7223.441357000411
+      ]
+    },
+    "memory": {
+      "peak_gpu_gb": 4.376038912
+    },
+    "compute": {
+      "avg_cuda_ms": 16339.059940199944,
+      "total_cuda_ms": 81695.29970099972,
+      "avg_flops_per_step": 158137759861.0,
+      "total_flops": 790688799305.0,
+      "arithmetic_intensity": 36.13719234245237
+    },
+    "top_kernels": [
+      {
+        "name": "inference_step_1",
+        "cuda_time_ms": 1446.998769,
+        "pct": 8.856071122181666,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_4",
+        "cuda_time_ms": 1444.7033507999995,
+        "pct": 8.84202246694445,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_3",
+        "cuda_time_ms": 1439.6297660000002,
+        "pct": 8.810970589917448,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_2",
+        "cuda_time_ms": 1438.9418925999998,
+        "pct": 8.806760596181467,
+        "calls": 0
+      },
+      {
+        "name": "inference_step_0",
+        "cuda_time_ms": 1435.3435720000002,
+        "pct": 8.784737783282992,
+        "calls": 0
+      },
+      {
+        "name": "aten::to",
+        "cuda_time_ms": 1159.248951799978,
+        "pct": 7.094955009913452,
+        "calls": 44196
+      },
+      {
+        "name": "aten::_to_copy",
+        "cuda_time_ms": 1070.5001617999762,
+        "pct": 6.55178551102663,
+        "calls": 29441
+      },
+      {
+        "name": "cudaLaunchKernel",
+        "cuda_time_ms": 1048.4707589998927,
+        "pct": 6.416958887703685,
+        "calls": 111571
+      },
+      {
+        "name": "bitsandbytes::dequantize_blockwise",
+        "cuda_time_ms": 835.0798575998843,
+        "pct": 5.11094188194566,
+        "calls": 11200
+      },
+      {
+        "name": "bitsandbytes::gemv_4bit",
+        "cuda_time_ms": 788.6308914000427,
+        "pct": 4.826660127855507,
+        "calls": 10976
+      }
+    ]
+  }
+}

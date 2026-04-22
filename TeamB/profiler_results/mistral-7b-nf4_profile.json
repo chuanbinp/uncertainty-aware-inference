@@ -1,0 +1,90 @@
+{
+  "config_key": "mistral-7b-nf4",
+  "hf_id": "mistralai/Mistral-7B-Instruct-v0.2",
+  "quant_type": "nf4",
+  "bits": 4,
+  "kineto_cuda": false,
+  "timing": {
+    "total_inference_ms": 7205.533238800036,
+    "tokens_per_second": 6.939111699709081,
+    "all_step_ms": [
+      7176.603678999982,
+      7234.9160079998,
+      7194.633430000067,
+      7198.071719999916,
+      7223.441357000411
+    ]
+  },
+  "memory": {
+    "peak_gpu_gb": 4.376038912
+  },
+  "compute": {
+    "avg_cuda_ms": 16339.059940199944,
+    "total_cuda_ms": 81695.29970099972,
+    "avg_flops_per_step": 158137759861.0,
+    "total_flops": 790688799305.0,
+    "arithmetic_intensity": 36.13719234245237
+  },
+  "top_kernels": [
+    {
+      "name": "inference_step_1",
+      "cuda_time_ms": 1446.998769,
+      "pct": 8.856071122181666,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_4",
+      "cuda_time_ms": 1444.7033507999995,
+      "pct": 8.84202246694445,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_3",
+      "cuda_time_ms": 1439.6297660000002,
+      "pct": 8.810970589917448,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_2",
+      "cuda_time_ms": 1438.9418925999998,
+      "pct": 8.806760596181467,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_0",
+      "cuda_time_ms": 1435.3435720000002,
+      "pct": 8.784737783282992,
+      "calls": 0
+    },
+    {
+      "name": "aten::to",
+      "cuda_time_ms": 1159.248951799978,
+      "pct": 7.094955009913452,
+      "calls": 44196
+    },
+    {
+      "name": "aten::_to_copy",
+      "cuda_time_ms": 1070.5001617999762,
+      "pct": 6.55178551102663,
+      "calls": 29441
+    },
+    {
+      "name": "cudaLaunchKernel",
+      "cuda_time_ms": 1048.4707589998927,
+      "pct": 6.416958887703685,
+      "calls": 111571
+    },
+    {
+      "name": "bitsandbytes::dequantize_blockwise",
+      "cuda_time_ms": 835.0798575998843,
+      "pct": 5.11094188194566,
+      "calls": 11200
+    },
+    {
+      "name": "bitsandbytes::gemv_4bit",
+      "cuda_time_ms": 788.6308914000427,
+      "pct": 4.826660127855507,
+      "calls": 10976
+    }
+  ]
+}

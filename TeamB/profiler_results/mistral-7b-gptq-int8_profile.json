@@ -1,0 +1,90 @@
+{
+  "config_key": "mistral-7b-gptq-int8",
+  "hf_id": "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
+  "quant_type": "gptq",
+  "bits": 8,
+  "kineto_cuda": false,
+  "timing": {
+    "total_inference_ms": 5999.248346000013,
+    "tokens_per_second": 8.334377428021861,
+    "all_step_ms": [
+      5927.7544609999495,
+      5887.145817999908,
+      6041.588628999989,
+      6103.22297200014,
+      6036.529850000079
+    ]
+  },
+  "memory": {
+    "peak_gpu_gb": 7.806736896
+  },
+  "compute": {
+    "avg_cuda_ms": 13638.15540340062,
+    "total_cuda_ms": 68190.7770170031,
+    "avg_flops_per_step": 836767758453.0,
+    "total_flops": 4183838792265.0,
+    "arithmetic_intensity": 107.18534127642259
+  },
+  "top_kernels": [
+    {
+      "name": "QuantLinearFunction",
+      "cuda_time_ms": 2577.6354312000126,
+      "pct": 18.900176416506365,
+      "calls": 11200
+    },
+    {
+      "name": "inference_step_3",
+      "cuda_time_ms": 1220.6629939999998,
+      "pct": 8.950352579907046,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_2",
+      "cuda_time_ms": 1208.3339348000002,
+      "pct": 8.859951357488614,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_4",
+      "cuda_time_ms": 1207.3230060000003,
+      "pct": 8.852538853597158,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_0",
+      "cuda_time_ms": 1185.5789994000002,
+      "pct": 8.693103754371215,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_1",
+      "cuda_time_ms": 1177.4471948,
+      "pct": 8.6334783551917,
+      "calls": 0
+    },
+    {
+      "name": "aten::matmul",
+      "cuda_time_ms": 728.3124832000202,
+      "pct": 5.340256520455973,
+      "calls": 11300
+    },
+    {
+      "name": "aten::mm",
+      "cuda_time_ms": 625.6557384000372,
+      "pct": 4.587539296142881,
+      "calls": 11250
+    },
+    {
+      "name": "cudaLaunchKernel",
+      "cuda_time_ms": 624.8314081999897,
+      "pct": 4.581495002206752,
+      "calls": 72627
+    },
+    {
+      "name": "aten::mul",
+      "cuda_time_ms": 319.78591220004563,
+      "pct": 2.3447885930402896,
+      "calls": 14700
+    }
+  ]
+}

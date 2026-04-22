@@ -1,0 +1,90 @@
+{
+  "config_key": "mistral-7b-awq-int4",
+  "hf_id": "TheBloke/Mistral-7B-Instruct-v0.2-AWQ",
+  "quant_type": "awq",
+  "bits": 4,
+  "kineto_cuda": false,
+  "timing": {
+    "total_inference_ms": 5483.170501399945,
+    "tokens_per_second": 9.118811823785922,
+    "all_step_ms": [
+      5468.378539999321,
+      5560.060161000365,
+      5489.559063999877,
+      5508.38153299992,
+      5389.4732090002435
+    ]
+  },
+  "memory": {
+    "peak_gpu_gb": 4.167378432
+  },
+  "compute": {
+    "avg_cuda_ms": 12561.249220400192,
+    "total_cuda_ms": 62806.24610200096,
+    "avg_flops_per_step": 13207779445.0,
+    "total_flops": 66038897225.0,
+    "arithmetic_intensity": 3.169325670925774
+  },
+  "top_kernels": [
+    {
+      "name": "WQLinearMMFunction",
+      "cuda_time_ms": 2210.342610600016,
+      "pct": 17.596519038968612,
+      "calls": 11200
+    },
+    {
+      "name": "inference_step_1",
+      "cuda_time_ms": 1112.0332858,
+      "pct": 8.852887688861342,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_3",
+      "cuda_time_ms": 1101.6961846,
+      "pct": 8.770594112652283,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_2",
+      "cuda_time_ms": 1097.9307709999998,
+      "pct": 8.740617686471,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_0",
+      "cuda_time_ms": 1093.7081222000002,
+      "pct": 8.707001214686157,
+      "calls": 0
+    },
+    {
+      "name": "inference_step_4",
+      "cuda_time_ms": 1077.9138088,
+      "pct": 8.5812628177889,
+      "calls": 0
+    },
+    {
+      "name": "cudaLaunchKernel",
+      "cuda_time_ms": 627.8796235997497,
+      "pct": 4.998544432826292,
+      "calls": 66259
+    },
+    {
+      "name": "aten::zeros",
+      "cuda_time_ms": 480.39187180001977,
+      "pct": 3.8243956741168366,
+      "calls": 11200
+    },
+    {
+      "name": "aten::mul",
+      "cuda_time_ms": 335.9157967999855,
+      "pct": 2.674222849224573,
+      "calls": 14700
+    },
+    {
+      "name": "aten::zero_",
+      "cuda_time_ms": 300.01733719997,
+      "pct": 2.3884355125501733,
+      "calls": 11200
+    }
+  ]
+}
