@@ -392,11 +392,23 @@ def profile_inference_fixed(
     sample_cuda_times = [_get_cuda_time(e) for e in key_avgs]
     has_cuda_times    = any(v > 0 for v in sample_cuda_times)
 
+    # record_function span labels (e.g. "inference_step_0") are not real GPU
+    # kernels — filter them out so top_kernels shows only actual CUDA kernels.
+    # Real kernels have a non-None input_shapes or are known aten/cuda ops;
+    # the simplest reliable filter is: exclude names that start with our label prefix
+    # and exclude pure Python-scope entries that have no device-side kernel name.
+    _SPAN_PREFIXES = ("inference_step_",)
+
+    def _is_real_kernel(e):
+        return not any(e.key.startswith(p) for p in _SPAN_PREFIXES)
+
     if has_cuda_times:
         logger.info(f"  [{config_key}] Kineto CUDA active — using real GPU kernel times")
         cuda_events     = [e for e in key_avgs if _get_cuda_time(e) > 0]
         total_cuda_us   = sum(_get_cuda_time(e) for e in cuda_events)
-        top_kernels_raw = sorted(cuda_events, key=_get_cuda_time, reverse=True)[:10]
+        # Sort all events by CUDA time, then filter spans for the top-10 display
+        real_events     = [e for e in cuda_events if _is_real_kernel(e)]
+        top_kernels_raw = sorted(real_events, key=_get_cuda_time, reverse=True)[:10]
     else:
         logger.warning(
             f"  [{config_key}] No GPU kernel times found — falling back to cpu_time_total. "
@@ -404,7 +416,8 @@ def profile_inference_fixed(
         )
         cuda_events     = [e for e in key_avgs if e.cpu_time_total > 0]
         total_cuda_us   = sum(e.cpu_time_total for e in cuda_events)
-        top_kernels_raw = sorted(cuda_events, key=lambda e: e.cpu_time_total, reverse=True)[:10]
+        real_events     = [e for e in cuda_events if _is_real_kernel(e)]
+        top_kernels_raw = sorted(real_events, key=lambda e: e.cpu_time_total, reverse=True)[:10]
 
     # key_averages() accumulates across ALL profile_steps — divide for per-step values
     avg_cuda_us        = total_cuda_us / profile_steps
@@ -448,7 +461,7 @@ def profile_inference_fixed(
                 "name":         e.key,
                 "cuda_time_ms": _kern_time_us(e) / profile_steps / 1e3,
                 "pct":          _kern_time_us(e) / total_cuda_us * 100 if total_cuda_us else 0,
-                "calls":        e.count // profile_steps,
+                "calls":        max(e.count // profile_steps, 1) if e.count > 0 else e.count,
             }
             for e in top_kernels_raw
         ],
