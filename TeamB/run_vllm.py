@@ -60,7 +60,7 @@ VLLM_CONFIGS = {
     "mistral-7b-gptq-int4": {
         "model":        "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
         "quantization": None,           # ← None forces Marlin kernel auto-detect
-        "revision":     "gptq-4bit-128g-actorder_True",
+        "revision":     "main",
         "dtype":        "float16",
     },
     "mistral-7b-gptq-int8": {
