@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b",
+  "precision": "awq",
+  "quant_method": "4bit",
+  "dataset": "triviaqa",
+  "tokens_per_second": 31.30175265682167,
+  "accuracy": 0.6853544116020203,
+  "num_examples": 17944,
+  "ECE": 0.15454301171459847,
+  "MCE": 0.33973401525746216,
+  "Brier_Score": 0.22884313762187958,
+  "Avg_Entropy": 0.414718359708786
+}
