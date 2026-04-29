@@ -127,40 +127,40 @@ NCU_SECTIONS = ["SpeedOfLight", "MemoryWorkloadAnalysis"]
 # (build_kernel_targets_from_profile()) is preferred.
 STATIC_KERNEL_TARGETS = {
     # ── Mistral-7B ────────────────────────────────────────────────────────────
-    # FP16: cuBLAS dispatches ampere_fp16_s16816gemm_* tiles on A100 (GA100).
-    # The full kernel name varies by problem size (e.g. _128x64_ldg8_f2f_...)
-    # so we match the common prefix only.  Confirmed from profiler_summary.json.
-    "mistral-7b-fp16":      "ampere_fp16_s16816gemm",
+    # FP16: cuBLAS names its auto-tuned GEMM kernel with an arch prefix.
+    #   A100 (Ampere GA100, cc 8.0) → ampere_fp16_s16816gemm_*
+    #   L4   (Ada Lovelace, cc 8.9) → ada_fp16_s16816gemm_*
+    # The regex covers both so the same target works if the script is run on
+    # either GPU — ncu will only match kernels that actually launched.
+    "mistral-7b-fp16":      "ampere_fp16_s16816gemm|ada_fp16_s16816gemm",
 
-    # GPTQ: QuantLinearFunction is the Python-registered op; dequant_kernel is
-    # the explicit dequantization kernel that precedes the cuBLAS GEMM call.
-    # Both appear in the profiler_summary.json top-kernels for INT4 and INT8.
+    # GPTQ: QuantLinearFunction is the Python-registered CUDA op (AutoGPTQ).
+    # dequant_kernel is the explicit weight dequantisation kernel preceding GEMM.
+    # Both appear for INT4 and INT8; names are architecture-independent.
     "mistral-7b-gptq-int4": "QuantLinearFunction|dequant_kernel",
     "mistral-7b-gptq-int8": "QuantLinearFunction|dequant_kernel",
 
-    # AWQ: awq_gemm_kernel is the fused W4A16 GEMV kernel from the AutoAWQ
-    # CUDA extension.  WQLinearMMFunction is the Python dispatcher for it.
+    # AWQ: awq_gemm_kernel is the fused W4A16 GEMV kernel from AutoAWQ's CUDA
+    # extension. WQLinearMMFunction is the Python dispatcher wrapping it.
+    # Architecture-independent (custom CUDA, not cuBLAS dispatch).
     "mistral-7b-awq-int4":  "awq_gemm_kernel|WQLinearMMFunction",
 
-    # NF4: bitsandbytes uses kgemm_4bit_inference_naive<__half, 128, 16> on A100.
-    # gemv_4bit is the registered op name; the template-specialised CUDA kernel
-    # name is caught by the kgemm_4bit prefix.
+    # NF4: bitsandbytes uses kgemm_4bit_inference_naive on both Ampere and Ada.
+    # The template specialisation varies (<__half, 128, 16>) but the prefix is fixed.
     "mistral-7b-nf4":       "kgemm_4bit_inference_naive|gemv_4bit",
 
     # ── Llama-2 7B ───────────────────────────────────────────────────────────
-    # Same underlying libraries as Mistral-7B — kernel names are identical
-    # since both are 7B attention-transformer models on the same GPU.
-    "llama2-7b-fp16":       "ampere_fp16_s16816gemm",
+    "llama2-7b-fp16":       "ampere_fp16_s16816gemm|ada_fp16_s16816gemm",
     "llama2-7b-gptq-int4":  "QuantLinearFunction|dequant_kernel",
     "llama2-7b-gptq-int8":  "QuantLinearFunction|dequant_kernel",
     "llama2-7b-awq-int4":   "awq_gemm_kernel|WQLinearMMFunction",
     "llama2-7b-nf4":        "kgemm_4bit_inference_naive|gemv_4bit",
 
     # ── Llama-2 13B ──────────────────────────────────────────────────────────
-    # 13B has larger matrix tiles — cuBLAS may select a different gemm variant
-    # (e.g. _256x64 instead of _128x64) but the ampere_fp16_s16816gemm prefix
-    # covers all tile sizes so the regex still matches.
-    "llama2-13b-fp16":      "ampere_fp16_s16816gemm",
+    # 13B uses larger matrix tiles; cuBLAS picks a wider variant
+    # (e.g. _256x128 vs _128x64) but the arch-prefixed function name prefix
+    # still matches, so these patterns are tile-size agnostic.
+    "llama2-13b-fp16":      "ampere_fp16_s16816gemm|ada_fp16_s16816gemm",
     "llama2-13b-gptq-int4": "QuantLinearFunction|dequant_kernel",
     "llama2-13b-gptq-int8": "QuantLinearFunction|dequant_kernel",
     "llama2-13b-awq-int4":  "awq_gemm_kernel|WQLinearMMFunction",
@@ -509,11 +509,12 @@ GPU_SPECS = {
     },
 }
 
-DEFAULT_GPU = "A100-80GB"   # project GPU — used everywhere as the default
-A100_SPECS  = GPU_SPECS["A100-80GB"]   # alias kept for backward compatibility
+DEFAULT_GPU    = "L4"              # GCP instance used for this project
+DEFAULT_SPECS  = GPU_SPECS["L4"]   # used as the default everywhere
+A100_SPECS     = GPU_SPECS["A100-80GB"]   # kept for backward compat / report comparison
 
 
-def compute_roofline_metrics(parsed: dict, gpu_specs: dict = A100_SPECS) -> dict:
+def compute_roofline_metrics(parsed: dict, gpu_specs: dict = None) -> dict:
     """
     For each kernel in the parsed ncu dict, compute:
       - flops:         total floating-point operations (FP16 tensor + FP32 CUDA cores)
@@ -526,6 +527,8 @@ def compute_roofline_metrics(parsed: dict, gpu_specs: dict = A100_SPECS) -> dict
       - mem_pct:       DRAM utilisation %
       - bound:         "Compute-bound", "Memory-bound (DRAM)", "Memory-bound (L2)", "Unknown"
     """
+    if gpu_specs is None:
+        gpu_specs = DEFAULT_SPECS   # L4 on this project's GCP instance
     ridge_dram = (gpu_specs["peak_fp16_tflops"] * 1e12) / (gpu_specs["dram_bw_tb_s"] * 1e12)
     ridge_l2   = (gpu_specs["peak_fp16_tflops"] * 1e12) / (gpu_specs["l2_bw_tb_s"]  * 1e12)
 
@@ -621,7 +624,7 @@ def run_ncu_sweep(
 ) -> dict:
     """Run ncu for each config, parse results, and save per-config metric JSONs."""
     if gpu_specs is None:
-        gpu_specs = A100_SPECS
+        gpu_specs = DEFAULT_SPECS   # L4
     output_dir.mkdir(parents=True, exist_ok=True)
     all_roofline = {}
 
@@ -709,8 +712,9 @@ def parse_args():
     p.add_argument("--gpu",           type=str, default=DEFAULT_GPU,
                    choices=list(GPU_SPECS.keys()),
                    help=f"GPU spec for Roofline ridge-point calculation (default: {DEFAULT_GPU}). "
-                        "All project experiments ran on A100-80GB — only change this if you "
-                        "intentionally run ncu on a different GPU.")
+                        "This project runs on GCP L4 (Ada Lovelace, 24 GB GDDR6, "
+                        "121 TFLOPS FP16, 300 GB/s — ridge point 403 FLOPs/byte). "
+                        "Pass --gpu A100-80GB only if comparing against A100 baselines.")
     p.add_argument("--profile-steps", type=int, default=1,
                    help="1 is sufficient for ncu (kernel replay gives stable counts)")
     p.add_argument("--n-tokens",      type=int, default=50)
