@@ -3,11 +3,11 @@
   "precision": "awq",
   "quant_method": "4bit",
   "dataset": "triviaqa",
-  "tokens_per_second": 22.726122745841206,
-  "accuracy": 0.7519999742507935,
-  "num_examples": 1000,
-  "ECE": 0.16465327659249304,
-  "MCE": 0.9418762922286987,
-  "Brier_Score": 0.22040346264839172,
-  "Avg_Entropy": 1.5082100629806519
+  "tokens_per_second": 22.821871372338947,
+  "accuracy": 0.751448929309845,
+  "num_examples": 17944,
+  "ECE": 0.15864672473948602,
+  "MCE": 0.9452579518159231,
+  "Brier_Score": 0.2178538739681244,
+  "Avg_Entropy": 1.4882816076278687
 }

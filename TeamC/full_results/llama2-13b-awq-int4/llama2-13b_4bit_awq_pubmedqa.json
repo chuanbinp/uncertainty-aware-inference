@@ -3,11 +3,11 @@
   "precision": "awq",
   "quant_method": "4bit",
   "dataset": "pubmedqa",
-  "tokens_per_second": 282.9007047219679,
-  "accuracy": 0.47099998593330383,
+  "tokens_per_second": 288.56701309487255,
+  "accuracy": 0.4699999988079071,
   "num_examples": 1000,
-  "ECE": 0.24151459312438966,
-  "MCE": 0.3956082916423066,
-  "Brier_Score": 0.31448277831077576,
-  "Avg_Entropy": 0.6738741397857666
+  "ECE": 0.24256515040993687,
+  "MCE": 0.38874064283828214,
+  "Brier_Score": 0.3143249750137329,
+  "Avg_Entropy": 0.6737704277038574
 }
