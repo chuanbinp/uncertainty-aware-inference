@@ -63,7 +63,7 @@ import numpy as np
 # Source: NVIDIA L4 datasheet
 L4_SPECS = {
     "name":             "NVIDIA L4 (Ada Lovelace, sm_89)",
-    "peak_fp16_tflops": 242.0,   # dense FP16/BF16 tensor core (no sparsity)
+    "peak_fp16_tflops": 121.0,   # dense FP16/BF16 tensor core (no sparsity)
     "peak_fp32_tflops": 30.3,    # FP32 CUDA core
     "dram_bw_gb_s":     300.0,   # GDDR6
 }

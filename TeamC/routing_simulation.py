@@ -27,7 +27,7 @@ _PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 RESULTS_DIRS = [
     os.path.join(_PROJECT_ROOT, "TeamA", "results"),
     os.path.join(_PROJECT_ROOT, "TeamB", "calibration_results"),
-    os.path.join(_PROJECT_ROOT, "TeamC", "updated_results"),
+    os.path.join(_PROJECT_ROOT, "TeamC", "full_results"),
 ]
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "results", "routing")
 

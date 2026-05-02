@@ -28,12 +28,30 @@ try:
 except ImportError:
     HAS_PLOTLY = False
 
+try:
+    from adjustText import adjust_text
+    HAS_ADJUST_TEXT = True
+except ImportError:
+    HAS_ADJUST_TEXT = False
+
 _PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 RESULTS_DIRS = [
     os.path.join(_PROJECT_ROOT, "TeamA", "results"),
     os.path.join(_PROJECT_ROOT, "TeamB", "calibration_results"),
-    os.path.join(_PROJECT_ROOT, "TeamC", "updated_results"),
+    os.path.join(_PROJECT_ROOT, "TeamC", "full_results"),
 ]
+
+MODEL_COLORS = {
+    "llama1-7b":  "tab:blue",
+    "llama2-13b": "tab:red",
+    "mistral-7b": "tab:green",
+}
+QUANT_MARKERS = {
+    "fp16": "o",
+    "awq":  "^",
+    "gptq": "D",
+    "nf4":  "s",
+}
 
 
 # -- Data loading -------------------------------------------------------------
@@ -341,6 +359,8 @@ def generate_combined_html(df_metrics, output_file="pareto_comparison.html"):
 # -- Matplotlib visualizations ------------------------------------------------
 
 def plot_2d_pareto_projections(df: pd.DataFrame, output_dir: str):
+    from matplotlib.lines import Line2D
+
     df_analyzed = find_pareto_frontier(df)
     pareto = df_analyzed[df_analyzed["is_pareto"]]
     non_pareto = df_analyzed[~df_analyzed["is_pareto"]]
@@ -351,24 +371,60 @@ def plot_2d_pareto_projections(df: pd.DataFrame, output_dir: str):
         ("accuracy",          "ece",      "Accuracy",              "ECE (lower is better)"),
     ]
     for x_col, y_col, x_label, y_label in projections:
-        fig, ax = plt.subplots(figsize=(8, 6))
-        if not non_pareto.empty:
-            ax.scatter(non_pareto[x_col], non_pareto[y_col], c="lightgray",
-                       s=60, edgecolors="gray", label="Sub-optimal", zorder=2)
+        fig, ax = plt.subplots(figsize=(10, 7))
+
+        # Sub-optimal: faded, no labels
+        for _, row in non_pareto.iterrows():
+            color = MODEL_COLORS.get(row["model_name"], "gray")
+            marker = QUANT_MARKERS.get(row["precision"], "o")
+            ax.scatter(row[x_col], row[y_col], c=color, s=40, marker=marker,
+                       alpha=0.3, edgecolors="none", zorder=2)
+
+        # Pareto-optimal: prominent, labeled
+        texts = []
+        for _, row in pareto.iterrows():
+            color = MODEL_COLORS.get(row["model_name"], "gray")
+            marker = QUANT_MARKERS.get(row["precision"], "o")
+            ax.scatter(row[x_col], row[y_col], c=color, s=120, marker=marker,
+                       edgecolors="black", linewidths=0.8, zorder=4)
+            texts.append(ax.annotate(
+                row.get("config_label", ""),
+                (row[x_col], row[y_col]),
+                fontsize=8, textcoords="offset points", xytext=(5, 5),
+            ))
+
+        # Dashed frontier line
         if not pareto.empty:
-            ax.scatter(pareto[x_col], pareto[y_col], c="steelblue", s=100,
-                       edgecolors="black", marker="D", label="Pareto-optimal", zorder=3)
-            for _, row in pareto.iterrows():
-                ax.annotate(row.get("config_label", ""), (row[x_col], row[y_col]),
-                            fontsize=7, textcoords="offset points", xytext=(5, 5))
+            sorted_pareto = pareto.sort_values(x_col)
+            ax.plot(sorted_pareto[x_col], sorted_pareto[y_col],
+                    linestyle="--", color="gray", alpha=0.5, linewidth=1.2, zorder=1)
+
+        # Two-group legend: model colors + quant shapes
+        color_handles = [
+            Line2D([0], [0], marker="o", color="w", markerfacecolor=c, markersize=9, label=m)
+            for m, c in MODEL_COLORS.items()
+        ]
+        shape_handles = [
+            Line2D([0], [0], marker=mk, color="w", markerfacecolor="gray", markersize=9, label=q)
+            for q, mk in QUANT_MARKERS.items()
+        ]
+        legend1 = ax.legend(handles=color_handles, title="Model", loc="upper left", fontsize=8)
+        ax.add_artist(legend1)
+        ax.legend(handles=shape_handles, title="Quant", loc="lower right", fontsize=8)
+
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
         ax.set_title(f"Pareto Frontier: {x_label} vs {y_label}")
-        ax.legend()
         ax.grid(True, alpha=0.3)
         plt.tight_layout()
+
+        # Resolve label collisions — must be after tight_layout
+        if HAS_ADJUST_TEXT and texts:
+            adjust_text(texts, ax=ax,
+                        arrowprops=dict(arrowstyle="-", color="gray", lw=0.5))
+
         fname = f"pareto_2d_{x_col}_vs_{y_col}.png"
-        plt.savefig(os.path.join(output_dir, fname), dpi=150, bbox_inches="tight")
+        plt.savefig(os.path.join(output_dir, fname), dpi=300, bbox_inches="tight")
         print(f"  Saved: {fname}")
         plt.close()
 
@@ -378,47 +434,64 @@ def plot_per_model_pareto(df: pd.DataFrame, output_dir: str):
     if len(models) < 2:
         return
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
     projections = [
         ("tokens_per_second", "accuracy", "Throughput (tokens/s)", "Accuracy"),
         ("tokens_per_second", "ece",      "Throughput (tokens/s)", "ECE"),
         ("accuracy",          "ece",      "Accuracy",              "ECE"),
     ]
-    colors  = {"llama2_7b": "blue", "llama2_13b": "red",  "mistral_7b": "green"}
-    markers = {"llama2_7b": "o",    "llama2_13b": "s",    "mistral_7b": "^"}
 
     per_model_rows = []
+    all_texts = [[] for _ in axes]
+
     for model in models:
         model_df = df[df["model_name"] == model].copy()
         model_analyzed = find_pareto_frontier(model_df)
         for _, row in model_analyzed.iterrows():
             per_model_rows.append({**row.to_dict(), "model_family": model})
-        color = colors.get(model, "gray")
-        marker = markers.get(model, "o")
+        color = MODEL_COLORS.get(model, "gray")
         pareto = model_analyzed[model_analyzed["is_pareto"]]
         non_pareto = model_analyzed[~model_analyzed["is_pareto"]]
-        for ax, (x_col, y_col, x_label, y_label) in zip(axes, projections):
-            if not non_pareto.empty:
-                ax.scatter(non_pareto[x_col], non_pareto[y_col],
-                           c=color, marker=marker, s=40, alpha=0.3)
-            if not pareto.empty:
-                ax.scatter(pareto[x_col], pareto[y_col], c=color, marker=marker,
-                           s=100, edgecolors="black", label=f"{model} (Pareto)", zorder=3)
-                for _, r in pareto.iterrows():
-                    ax.annotate(r["quant_method"] + " " + r["precision"],
-                                (r[x_col], r[y_col]),
-                                fontsize=6, textcoords="offset points", xytext=(4, 4))
 
-    for ax, (x_col, y_col, x_label, y_label) in zip(axes, projections):
-        ax.set_xlabel(x_label)
-        ax.set_ylabel(y_label)
-        ax.set_title(f"{x_label} vs {y_label}")
-        ax.legend(fontsize=7)
-        ax.grid(True, alpha=0.3)
+        for ax_idx, (ax, (x_col, y_col, _, _)) in enumerate(zip(axes, projections)):
+            for _, row in non_pareto.iterrows():
+                marker = QUANT_MARKERS.get(row["precision"], "o")
+                ax.scatter(row[x_col], row[y_col], c=color, marker=marker,
+                           s=40, alpha=0.25, edgecolors="none")
+            for row_idx, (_, row) in enumerate(pareto.iterrows()):
+                marker = QUANT_MARKERS.get(row["precision"], "o")
+                lbl = model if row_idx == 0 else "_nolegend_"
+                ax.scatter(row[x_col], row[y_col], c=color, marker=marker,
+                           s=100, edgecolors="black", linewidths=0.8,
+                           label=lbl, zorder=3)
+                all_texts[ax_idx].append(ax.annotate(
+                    row["quant_method"] + " " + row["precision"],
+                    (row[x_col], row[y_col]),
+                    fontsize=8, textcoords="offset points", xytext=(4, 4),
+                ))
+            if not pareto.empty:
+                sorted_pareto = pareto.sort_values(projections[ax_idx][0])
+                axes[ax_idx].plot(
+                    sorted_pareto[projections[ax_idx][0]],
+                    sorted_pareto[projections[ax_idx][1]],
+                    linestyle="--", color=color, alpha=0.4, linewidth=1.0,
+                )
 
     plt.suptitle("Per-Model Pareto Frontiers: Comparing Model Families", fontsize=13)
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "pareto_per_model_comparison.png"), dpi=150, bbox_inches="tight")
+
+    for ax, (_, _, x_label, y_label), texts in zip(axes, projections, all_texts):
+        if HAS_ADJUST_TEXT and texts:
+            adjust_text(texts, ax=ax,
+                        arrowprops=dict(arrowstyle="-", color="gray", lw=0.5))
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(f"{x_label} vs {y_label}")
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+
+    plt.savefig(os.path.join(output_dir, "pareto_per_model_comparison.png"),
+                dpi=300, bbox_inches="tight")
     print("  Saved: pareto_per_model_comparison.png")
     plt.close()
 
