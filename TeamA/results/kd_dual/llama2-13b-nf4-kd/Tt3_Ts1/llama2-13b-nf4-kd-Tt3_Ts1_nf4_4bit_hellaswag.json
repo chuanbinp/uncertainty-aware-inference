@@ -1,0 +1,13 @@
+{
+  "model": "llama2-13b-nf4-kd-Tt3_Ts1",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "hellaswag",
+  "tokens_per_second": 901.2424842652933,
+  "accuracy": 0.7450000047683716,
+  "num_examples": 1000,
+  "ECE": 0.35767956253886224,
+  "MCE": 0.7544090151786804,
+  "Brier_Score": 0.3023054301738739,
+  "Avg_Entropy": 1.3062727451324463
+}
