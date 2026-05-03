@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b-nf4-kd-Tt4_Ts2",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "triviaqa",
+  "tokens_per_second": 24.912616279840464,
+  "accuracy": 0.13500000536441803,
+  "num_examples": 1000,
+  "ECE": 0.33065144576132294,
+  "MCE": 0.5519422292709351,
+  "Brier_Score": 0.2314695417881012,
+  "Avg_Entropy": 3.5487630367279053
+}
