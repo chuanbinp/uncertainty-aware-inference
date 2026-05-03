@@ -1,0 +1,13 @@
+{
+  "model": "llama2-13b-nf4-kd-T12",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "pubmedqa",
+  "tokens_per_second": 248.3123114275326,
+  "accuracy": 0.47999998927116394,
+  "num_examples": 1000,
+  "ECE": 0.2138746719658375,
+  "MCE": 0.34893573465801425,
+  "Brier_Score": 0.300840824842453,
+  "Avg_Entropy": 0.7029524445533752
+}
