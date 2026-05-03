@@ -1,0 +1,13 @@
+{
+  "model": "llama1-7b-nf4-kd-T8",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "hellaswag",
+  "tokens_per_second": 1139.1793438206134,
+  "accuracy": 0.6980000138282776,
+  "num_examples": 1000,
+  "ECE": 0.27261819145083427,
+  "MCE": 0.36918837335747734,
+  "Brier_Score": 0.26937633752822876,
+  "Avg_Entropy": 1.2595654726028442
+}

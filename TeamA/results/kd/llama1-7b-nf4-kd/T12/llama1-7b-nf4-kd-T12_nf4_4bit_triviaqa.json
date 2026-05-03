@@ -1,0 +1,13 @@
+{
+  "model": "llama1-7b-nf4-kd-T12",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "triviaqa",
+  "tokens_per_second": 26.77790279411545,
+  "accuracy": 0.5820000171661377,
+  "num_examples": 1000,
+  "ECE": 0.05159153732657433,
+  "MCE": 0.13160783880286753,
+  "Brier_Score": 0.2422344833612442,
+  "Avg_Entropy": 1.550762414932251
+}

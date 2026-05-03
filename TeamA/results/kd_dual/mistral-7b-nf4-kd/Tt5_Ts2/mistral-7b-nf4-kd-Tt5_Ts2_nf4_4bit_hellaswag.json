@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b-nf4-kd-Tt5_Ts2",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "hellaswag",
+  "tokens_per_second": 958.1282329803081,
+  "accuracy": 0.3569999933242798,
+  "num_examples": 1000,
+  "ECE": 0.04933306264877319,
+  "MCE": 0.8790603876113892,
+  "Brier_Score": 0.2303546965122223,
+  "Avg_Entropy": 1.2946666479110718
+}

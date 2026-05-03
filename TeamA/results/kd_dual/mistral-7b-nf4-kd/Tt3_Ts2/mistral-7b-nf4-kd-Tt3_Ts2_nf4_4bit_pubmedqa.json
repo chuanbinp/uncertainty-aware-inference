@@ -1,0 +1,13 @@
+{
+  "model": "mistral-7b-nf4-kd-Tt3_Ts2",
+  "precision": "4bit",
+  "quant_method": "nf4",
+  "dataset": "pubmedqa",
+  "tokens_per_second": 259.0204775923794,
+  "accuracy": 0.45500001311302185,
+  "num_examples": 1000,
+  "ECE": 0.20752434337139133,
+  "MCE": 0.6029234925905864,
+  "Brier_Score": 0.3060966432094574,
+  "Avg_Entropy": 0.7285510897636414
+}
