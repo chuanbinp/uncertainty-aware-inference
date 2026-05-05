@@ -58,14 +58,29 @@ QUANT_MARKERS = {
 
 def load_cross_team_results(results_dirs: list) -> pd.DataFrame:
     rows = []
+
     for d in results_dirs:
+        team_name = os.path.basename(os.path.normpath(os.path.dirname(d)))
+
         for path in glob.glob(os.path.join(d, "**", "*.json"), recursive=True):
+            #skip kd results
+            rel_path = os.path.relpath(path, d)
+            if team_name == "TeamA":
+                parts = Path(rel_path).parts
+                if "kd" in parts or "kd_dual" in parts:
+                    continue
             with open(path) as f:
-                rows.append(json.load(f))
+                row = json.load(f)
+            # Normalize TeamB and TeamC schema
+            if team_name in {"TeamB", "TeamC"}:
+                if "quant_method" in row and "precision" in row:
+                    row["quant_method"], row["precision"] = row["precision"], row["quant_method"]
+            rows.append(row)
+
     if not rows:
         raise FileNotFoundError(f"No JSON result files found in: {results_dirs}")
-    return pd.DataFrame(rows)
 
+    return pd.DataFrame(rows)
 
 def aggregate_for_pareto(df: pd.DataFrame) -> pd.DataFrame:
     agg = df.groupby(["model", "quant_method", "precision"]).agg({
@@ -166,7 +181,7 @@ def create_plot(df: pd.DataFrame, dataset_name: str, view_type: str):
                 continue
             fig.add_trace(go.Scatter3d(
                 x=d['tokens_per_second'], y=d['accuracy'], z=d['ECE'],
-                mode='markers', name=name, text=d['quant_method'],
+                mode='markers', name=name, text=d['model'] + ' - ' + d['quant_method'],
                 marker=dict(size=size, color=color,
                             colorscale='Viridis' if name == 'Pareto Optimal' else None,
                             symbol=symbol, opacity=0.8, line=dict(width=1, color='black')),
@@ -189,7 +204,7 @@ def create_plot(df: pd.DataFrame, dataset_name: str, view_type: str):
             ))
         fig.add_trace(go.Scatter(
             x=df_analyzed[x_m], y=df_analyzed[y_m], mode='markers+text',
-            text=df_analyzed['quant_method'], textposition="top center",
+            text=df_analyzed['model'] + ' - ' + df_analyzed['quant_method'], textposition="top center",
             marker=dict(size=12,
                         color=df_analyzed['is_pareto'].map({True: '#27ae60', False: '#bdc3c7'}),
                         line=dict(width=1, color='black')),
@@ -312,7 +327,7 @@ def generate_combined_html(df_metrics, output_file="pareto_comparison.html"):
                      f'{fig.to_html(full_html=False, include_plotlyjs="cdn", div_id=f"p_{vt_id}_{ds}")}'
                      f'</div>')
             html += '<div class="table-area"><table><thead><tr>'
-            cols = ['model', 'quant_method', 'tokens_per_second', 'accuracy', 'ECE', 'is_pareto']
+            cols = ['model', 'quant_method', 'precision', 'tokens_per_second', 'accuracy', 'ECE', 'is_pareto']
             for c in cols:
                 html += f'<th>{c.replace("_"," ").title()}</th>'
             html += '</tr></thead><tbody>'
