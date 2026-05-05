@@ -163,6 +163,12 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
     """Run vLLM throughput benchmark for a vLLM-supported config."""
     from vllm import LLM, SamplingParams
 
+    # Must be set before LLM() — vLLM spawns worker processes that read
+    # HF_TOKEN from the environment, not from Python kwargs.
+    if hf_token:
+        os.environ["HF_TOKEN"] = hf_token
+        os.environ["HUGGING_FACE_HUB_TOKEN"] = hf_token  # older transformers fallback
+
     cfg = VLLM_CONFIGS[config_key]
     logger.info(f"Loading {config_key} via vLLM — model={cfg['model']}, quant={cfg['quantization']}")
 
@@ -177,10 +183,6 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
         load_kwargs["quantization"] = cfg["quantization"]
     if cfg["revision"] is not None:
         load_kwargs["revision"] = cfg["revision"]
-    # vLLM does not accept tokenizer_kwargs in LLM(). The correct approach is
-    # to set HF_TOKEN in the environment before calling LLM(), which the
-    # notebook already does via: os.environ["HF_TOKEN"] = HF_TOKEN
-    # No additional kwarg needed here.
 
     llm = LLM(**load_kwargs)
 
