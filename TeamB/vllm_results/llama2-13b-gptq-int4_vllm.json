@@ -1,0 +1,16 @@
+{
+  "config_key": "llama2-13b-gptq-int4",
+  "model": "TheBloke/Llama-2-13B-GPTQ",
+  "quantization": null,
+  "revision": "main",
+  "kernel": "gptq_marlin",
+  "avg_tok_per_sec": 1214.9,
+  "iter_tok_per_sec": [
+    1214.79,
+    1215.15,
+    1214.75
+  ],
+  "peak_gpu_mem_gb": 35.418,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}

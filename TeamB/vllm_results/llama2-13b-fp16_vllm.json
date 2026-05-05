@@ -1,0 +1,16 @@
+{
+  "config_key": "llama2-13b-fp16",
+  "model": "meta-llama/Llama-2-13b-hf",
+  "quantization": null,
+  "revision": null,
+  "kernel": "cuBLAS",
+  "avg_tok_per_sec": 448.84,
+  "iter_tok_per_sec": [
+    448.88,
+    448.78,
+    448.86
+  ],
+  "peak_gpu_mem_gb": 35.467,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}

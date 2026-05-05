@@ -1,0 +1,16 @@
+{
+  "config_key": "llama2-13b-awq-int4",
+  "model": "TheBloke/Llama-2-13B-AWQ",
+  "quantization": "awq",
+  "revision": null,
+  "kernel": "fused_GEMV (AWQ)",
+  "avg_tok_per_sec": 97.88,
+  "iter_tok_per_sec": [
+    97.88,
+    97.89,
+    97.88
+  ],
+  "peak_gpu_mem_gb": 22.648,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}
