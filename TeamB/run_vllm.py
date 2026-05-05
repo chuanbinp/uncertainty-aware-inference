@@ -75,7 +75,112 @@ VLLM_CONFIGS = {
         "revision":     None,
         "dtype":        "float16",
     },
-    # NF4 is handled via HF fallback below — no vLLM entry
+    # ── Llama-2 13B ───────────────────────────────────────────────────────────
+    "llama2-13b-fp16": {
+        "model":        "meta-llama/Llama-2-13b-hf",
+        "quantization": None,
+        "revision":     None,
+        "dtype":        "float16",
+    },
+    "llama2-13b-gptq-int4": {
+        "model":        "TheBloke/Llama-2-13B-GPTQ",
+        "quantization": None,           # ← None forces Marlin kernel auto-detect
+        "revision":     "main",
+        "dtype":        "float16",
+    },
+    "llama2-13b-gptq-int8": {
+        "model":        "TheBloke/Llama-2-13B-GPTQ",
+        "quantization": "gptq",         # ← explicit gptq (no INT8 Marlin)
+        "revision":     "gptq-8bit-128g-actorder_True",
+        "dtype":        "float16",
+    },
+    "llama2-13b-awq-int4": {
+        "model":        "TheBloke/Llama-2-13B-AWQ",
+        "quantization": "awq",
+        "revision":     None,
+        "dtype":        "float16",
+    },
+    # NF4 is handled via HF fallback below — no vLLM entry for either model
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# KD config map: config_key → knowledge-distillation + LoRA params
+# Each entry pairs a full-precision teacher with a quantized student.
+# LoRA is applied to the student's attention projections to recover quality
+# lost during quantization (QLoRA-style for NF4; adapter-only for AWQ/GPTQ).
+# alpha (NF4 only): interpolation weight between teacher and CE loss.
+# ─────────────────────────────────────────────────────────────────────────────
+KD_CONFIGS = {
+    # ── Mistral-7B ────────────────────────────────────────────────────────────
+    "mistral-7b-awq-int4-kd": {
+        "teacher":              "mistral-7b-fp16",
+        "teacher_hf_id":        "mistralai/Mistral-7B-Instruct-v0.2",
+        "student":              "mistral-7b-awq-int4",
+        "student_hf_id":        "TheBloke/Mistral-7B-Instruct-v0.2-AWQ",
+        "student_quant_type":   "awq",
+        "student_bits":         4,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
+    "mistral-7b-gptq-int4-kd": {
+        "teacher":              "mistral-7b-fp16",
+        "teacher_hf_id":        "mistralai/Mistral-7B-Instruct-v0.2",
+        "student":              "mistral-7b-gptq-int4",
+        "student_hf_id":        "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",
+        "student_quant_type":   "gptq",
+        "student_bits":         4,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
+    "mistral-7b-nf4-kd": {
+        "teacher":              "mistral-7b-fp16",
+        "teacher_hf_id":        "mistralai/Mistral-7B-Instruct-v0.2",
+        "student":              "mistral-7b-nf4",
+        "student_hf_id":        "mistralai/Mistral-7B-Instruct-v0.2",
+        "student_quant_type":   "nf4",
+        "student_bits":         4,
+        "alpha":                0.7,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
+    # ── Llama-2 13B ───────────────────────────────────────────────────────────
+    "llama2-13b-awq-int4-kd": {
+        "teacher":              "llama2-13b-fp16",
+        "teacher_hf_id":        "meta-llama/Llama-2-13b-hf",
+        "student":              "llama2-13b-awq-int4",
+        "student_hf_id":        "TheBloke/Llama-2-13B-AWQ",
+        "student_quant_type":   "awq",
+        "student_bits":         4,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
+    "llama2-13b-gptq-int4-kd": {
+        "teacher":              "llama2-13b-fp16",
+        "teacher_hf_id":        "meta-llama/Llama-2-13b-hf",
+        "student":              "llama2-13b-gptq-int4",
+        "student_hf_id":        "TheBloke/Llama-2-13B-GPTQ",
+        "student_quant_type":   "gptq",
+        "student_bits":         4,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
+    "llama2-13b-nf4-kd": {
+        "teacher":              "llama2-13b-fp16",
+        "teacher_hf_id":        "meta-llama/Llama-2-13b-hf",
+        "student":              "llama2-13b-nf4",
+        "student_hf_id":        "meta-llama/Llama-2-13b-hf",
+        "student_quant_type":   "nf4",
+        "student_bits":         4,
+        "alpha":                0.7,
+        "lora_r":               16,
+        "lora_alpha":           32,
+        "lora_target_modules":  ["q_proj", "k_proj", "v_proj", "o_proj"],
+    },
 }
 
 # Prompts used for throughput measurement
@@ -133,7 +238,7 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
         kernel_label = "fused_GEMV (AWQ)"
     elif cfg["quantization"] == "gptq":
         kernel_label = "gptq (exllama)"
-    elif config_key == "mistral-7b-gptq-int4":
+    elif config_key in ("mistral-7b-gptq-int4", "llama2-13b-gptq-int4"):
         kernel_label = "gptq_marlin"
 
     # Warmup
@@ -174,14 +279,20 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
     return result
 
 
-def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
+NF4_MODELS = {
+    "mistral-7b-nf4":   "mistralai/Mistral-7B-Instruct-v0.2",
+    "llama2-13b-nf4":   "meta-llama/Llama-2-13b-hf",
+}
+
+
+def run_hf_nf4_benchmark(config_key: str, hf_token: str | None, output_dir: Path) -> dict:
     """
     HuggingFace batched-generation fallback for NF4 (vLLM does not support
-    bitsandbytes NF4 quantization).
+    bitsandbytes NF4 quantization). Supports both Mistral-7B and Llama-2-13B.
     """
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-    logger.info("NF4: using HF batched generation fallback (vLLM unsupported)")
+    logger.info(f"NF4 ({config_key}): using HF batched generation fallback (vLLM unsupported)")
 
     bnb_cfg = BitsAndBytesConfig(
         load_in_4bit               = True,
@@ -191,7 +302,7 @@ def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
     )
 
     tok_kwargs = {"token": hf_token} if hf_token else {}
-    model_id   = "mistralai/Mistral-7B-Instruct-v0.2"
+    model_id   = NF4_MODELS[config_key]
 
     tokenizer = AutoTokenizer.from_pretrained(model_id, **tok_kwargs, use_fast=True)
     if tokenizer.pad_token is None:
@@ -236,7 +347,7 @@ def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
     peak_mem_gb = get_gpu_mem_gb()
 
     result = {
-        "config_key":       "mistral-7b-nf4",
+        "config_key":       config_key,
         "model":            model_id,
         "quantization":     "nf4_bitsandbytes",
         "revision":         None,
@@ -246,7 +357,7 @@ def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
         "peak_gpu_mem_gb":  round(peak_mem_gb, 3),
         "n_prompts":        len(BENCHMARK_PROMPTS),
         "n_output_tokens":  N_OUTPUT_TOKENS,
-        "note":             "HF batched fallback — vLLM does not support bitsandbytes NF4",
+        "note":             f"HF batched fallback — vLLM does not support bitsandbytes NF4 ({config_key})",
     }
 
     logger.info(f"  NF4 → {avg_tok_per_sec:.1f} tok/s  |  {peak_mem_gb:.2f} GB peak")
@@ -259,7 +370,7 @@ def run_hf_nf4_benchmark(hf_token: str | None, output_dir: Path) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="vLLM throughput benchmark for Mistral-7B PTQ sweep")
     parser.add_argument("--config",     required=True,
-                        choices=list(VLLM_CONFIGS.keys()) + ["mistral-7b-nf4"],
+                        choices=list(VLLM_CONFIGS.keys()) + list(NF4_MODELS.keys()),
                         help="config key to benchmark")
     parser.add_argument("--output-dir", default="./vllm_results",
                         help="directory to save JSON results")
@@ -275,8 +386,8 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    if args.config == "mistral-7b-nf4":
-        result = run_hf_nf4_benchmark(hf_token, output_dir)
+    if args.config in NF4_MODELS:
+        result = run_hf_nf4_benchmark(args.config, hf_token, output_dir)
     else:
         result = run_vllm_benchmark(args.config, hf_token, output_dir)
 
