@@ -21,6 +21,18 @@ from pathlib import Path
 
 import torch
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Auto-install vLLM if not present (Colab / fresh VM environments)
+# ─────────────────────────────────────────────────────────────────────────────
+try:
+    import vllm  # noqa: F401
+except ModuleNotFoundError:
+    import subprocess as _sp
+    import sys as _sys
+    print("[setup] vLLM not found — installing…")
+    _sp.check_call([_sys.executable, "-m", "pip", "install", "-q", "vllm"])
+    print("[setup] vLLM installed.")
+
 
 def get_gpu_mem_gb() -> float:
     """
@@ -71,6 +83,31 @@ VLLM_CONFIGS = {
     },
     "mistral-7b-awq-int4": {
         "model":        "TheBloke/Mistral-7B-Instruct-v0.2-AWQ",
+        "quantization": "awq",
+        "revision":     None,
+        "dtype":        "float16",
+    },
+    # ── Llama-1 7B ────────────────────────────────────────────────────────────
+    "llama1-7b-fp16": {
+        "model":        "huggyllama/llama-7b",
+        "quantization": None,
+        "revision":     None,
+        "dtype":        "float16",
+    },
+    "llama1-7b-gptq-int4": {
+        "model":        "TheBloke/LLaMa-7B-GPTQ",
+        "quantization": None,           # ← None forces Marlin kernel auto-detect
+        "revision":     "gptq-4bit-128g-actorder_True",
+        "dtype":        "float16",
+    },
+    "llama1-7b-gptq-int8": {
+        "model":        "TheBloke/LLaMa-7B-GPTQ",
+        "quantization": "gptq",         # ← explicit gptq (no INT8 Marlin)
+        "revision":     "gptq-8bit-128g-actorder_True",
+        "dtype":        "float16",
+    },
+    "llama1-7b-awq-int4": {
+        "model":        "TheBloke/LLaMA-7b-AWQ",
         "quantization": "awq",
         "revision":     None,
         "dtype":        "float16",
@@ -158,7 +195,7 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
         kernel_label = "fused_GEMV (AWQ)"
     elif cfg["quantization"] == "gptq":
         kernel_label = "gptq (exllama)"
-    elif config_key in ("mistral-7b-gptq-int4", "llama2-13b-gptq-int4"):
+    elif config_key in ("mistral-7b-gptq-int4", "llama1-7b-gptq-int4", "llama2-13b-gptq-int4"):
         kernel_label = "gptq_marlin"
 
     # Warmup
@@ -201,6 +238,7 @@ def run_vllm_benchmark(config_key: str, hf_token: str | None, output_dir: Path) 
 
 NF4_MODELS = {
     "mistral-7b-nf4":   "mistralai/Mistral-7B-Instruct-v0.2",
+    "llama1-7b-nf4":    "huggyllama/llama-7b",
     "llama2-13b-nf4":   "meta-llama/Llama-2-13b-hf",
 }
 
