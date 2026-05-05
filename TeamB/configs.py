@@ -40,7 +40,6 @@ MODEL_REGISTRY = {
         "bits": 4,
         "description": "NF4 (bitsandbytes 4-bit)",
     },
-    MODEL_REGISTRY = {
     "llama1-7b-fp16": {
         "hf_id": "huggyllama/llama-7b",
         "quant_type": "fp16",
