@@ -1,0 +1,16 @@
+{
+  "config_key": "llama1-7b-fp16",
+  "model": "huggyllama/llama-7b",
+  "quantization": null,
+  "revision": null,
+  "kernel": "cuBLAS",
+  "avg_tok_per_sec": 867.62,
+  "iter_tok_per_sec": [
+    868.1,
+    867.41,
+    867.36
+  ],
+  "peak_gpu_mem_gb": 35.514,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}

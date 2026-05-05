@@ -1,0 +1,16 @@
+{
+  "config_key": "llama1-7b-awq-int4",
+  "model": "TheBloke/LLaMA-7b-AWQ",
+  "quantization": "awq",
+  "revision": null,
+  "kernel": "fused_GEMV (AWQ)",
+  "avg_tok_per_sec": 205.71,
+  "iter_tok_per_sec": [
+    205.71,
+    205.68,
+    205.74
+  ],
+  "peak_gpu_mem_gb": 35.586,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}

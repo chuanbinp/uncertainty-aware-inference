@@ -1,0 +1,16 @@
+{
+  "config_key": "llama1-7b-gptq-int4",
+  "model": "TheBloke/LLaMa-7B-GPTQ",
+  "quantization": null,
+  "revision": "gptq-4bit-128g-actorder_True",
+  "kernel": "gptq_marlin",
+  "avg_tok_per_sec": 1664.93,
+  "iter_tok_per_sec": [
+    1665.7,
+    1664.51,
+    1664.57
+  ],
+  "peak_gpu_mem_gb": 35.432,
+  "n_prompts": 10,
+  "n_output_tokens": 128
+}
