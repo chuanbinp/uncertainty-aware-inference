@@ -15,7 +15,7 @@ To run the experiments, ensure you have:
    - Sign up at [wandb.ai](https://wandb.ai)
    - Login: `wandb login`
 
-3. **GPU Access**: We used A100 on Google Colab for our experiments.
+3. **GPU Access**: We used A100 40GB on Google Colab for our experiments
 
 ## Environment Setup
 
@@ -45,6 +45,22 @@ No manual data preparation is required.
 ### `configs.py`
 Defines quantization configurations for Llama-2 13B PTQ sweep. Contains a model registry with different quantization types (FP16, GPTQ INT4/INT8, NF4, AWQ INT4) and their HuggingFace model IDs.
 
+### `run_eval.py`
+Runs calibration evaluation for one quantization configuration across multiple datasets (hellaswag, triviaqa, pubmedqa). Uses Weights & Biases for logging results.
+
+Supported configs:
+- `llama2-13b-fp16`: FP16 baseline (requires HF_TOKEN)
+- `llama2-13b-nf4`: NF4 bitsandbytes (requires HF_TOKEN)
+- `llama2-13b-awq-int4`: AWQ INT4
+- `llama2-13b-gptq-int4`: GPTQ INT4
+- `llama2-13b-gptq-int8`: GPTQ INT8
+
+Usage:
+```bash
+python TeamC/run_eval.py
+HF_TOKEN=hf_... python TeamC/run_eval.py  # for gated models
+```
+
 ### `llama2_13b.ipynb`
 A Google Colab notebook for running calibration evaluations on different quantization configurations of Llama-2 13B. The notebook:
 - Clones the repository
@@ -69,22 +85,6 @@ Usage:
 ```bash
 python TeamC/routing_simulation.py
 python TeamC/routing_simulation.py --dataset arc_challenge --num_thresholds 200
-```
-
-### `run_eval.py`
-Runs calibration evaluation for one quantization configuration across multiple datasets (hellaswag, triviaqa, pubmedqa). Uses Weights & Biases for logging results.
-
-Supported configs:
-- `llama2-13b-fp16`: FP16 baseline (requires HF_TOKEN)
-- `llama2-13b-nf4`: NF4 bitsandbytes (requires HF_TOKEN)
-- `llama2-13b-awq-int4`: AWQ INT4
-- `llama2-13b-gptq-int4`: GPTQ INT4
-- `llama2-13b-gptq-int8`: GPTQ INT8
-
-Usage:
-```bash
-python TeamC/run_eval.py
-HF_TOKEN=hf_... python TeamC/run_eval.py  # for gated models
 ```
 
 ## Results Locations
