@@ -1,6 +1,6 @@
 # Team C
 
-Team C focuses on calibration evaluation and uncertainty-aware inference strategies for quantized language models.
+Team C focuses on running calibration sweeps for Llama-2 13B, cross-model evaluations, pareto-analysis and uncertainty-aware routing strategies for quantized language models.
 
 ## Prerequisites
 
