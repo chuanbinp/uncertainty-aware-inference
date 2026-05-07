@@ -90,7 +90,7 @@ python TeamC/routing_simulation.py --dataset arc_challenge --num_thresholds 200
 ## Results Locations
 
 ### `analysis_results/`
-Contains results from analysis scripts.
+Contains results from analysis scripts. [Pareto Dashboard Results](https://chuanbinp.github.io/uncertainty-aware-inference/TeamC/analysis_results/pareto/pareto_comparison.html)
 
 - `pareto/`: Output from Pareto frontier analysis, including plots and dominant configuration summaries.
 - `routing/`: Results from routing simulation, including threshold sweeps and cost-accuracy tradeoffs.
