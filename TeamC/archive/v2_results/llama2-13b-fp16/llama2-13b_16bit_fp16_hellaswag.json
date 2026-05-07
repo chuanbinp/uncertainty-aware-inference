@@ -1,0 +1,13 @@
+{
+  "model": "llama2-13b",
+  "precision": "fp16",
+  "quant_method": "16bit",
+  "dataset": "hellaswag",
+  "tokens_per_second": 1905.803619017909,
+  "accuracy": 0.7749999761581421,
+  "num_examples": 1000,
+  "ECE": 0.33496851766109476,
+  "MCE": 0.7374945282936096,
+  "Brier_Score": 0.2724977135658264,
+  "Avg_Entropy": 1.2443022727966309
+}

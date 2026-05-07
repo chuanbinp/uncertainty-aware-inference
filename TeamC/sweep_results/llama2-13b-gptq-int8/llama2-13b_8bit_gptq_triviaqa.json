@@ -1,0 +1,13 @@
+{
+  "model": "llama2-13b",
+  "precision": "gptq",
+  "quant_method": "8bit",
+  "dataset": "triviaqa",
+  "tokens_per_second": 18.80365065838734,
+  "accuracy": 0.7671645283699036,
+  "num_examples": 17944,
+  "ECE": 0.1624631774389632,
+  "MCE": 0.948778972029686,
+  "Brier_Score": 0.2106620967388153,
+  "Avg_Entropy": 1.4341596364974976
+}

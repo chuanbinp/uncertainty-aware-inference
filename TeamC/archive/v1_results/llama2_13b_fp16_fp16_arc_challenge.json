@@ -1,0 +1,13 @@
+{
+  "model": "llama2_13b",
+  "precision": "fp16",
+  "quant_method": "fp16",
+  "dataset": "arc_challenge",
+  "tokens_per_second": 751.6153722976018,
+  "accuracy": 0.3678929805755615,
+  "num_examples": 299,
+  "ECE": 0.36212995648384094,
+  "MCE": 0.6079676151275635,
+  "Brier_Score": 0.4047981798648834,
+  "Avg_Entropy": 0.6250120401382446
+}

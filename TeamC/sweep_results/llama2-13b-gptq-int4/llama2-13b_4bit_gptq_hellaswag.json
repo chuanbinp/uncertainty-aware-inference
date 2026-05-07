@@ -1,0 +1,13 @@
+{
+  "model": "llama2-13b",
+  "precision": "gptq",
+  "quant_method": "4bit",
+  "dataset": "hellaswag",
+  "tokens_per_second": 2179.7299392803675,
+  "accuracy": 0.7663812041282654,
+  "num_examples": 10042,
+  "ECE": 0.3272812951788725,
+  "MCE": 0.40242942215442135,
+  "Brier_Score": 0.2694176733493805,
+  "Avg_Entropy": 1.2466939687728882
+}

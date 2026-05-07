@@ -27,7 +27,7 @@ CONFIG_KEY = "llama2-13b-nf4"
 MAX_SAMPLES = None
 SEED = 42
 
-OUTPUT_DIR = f"./full_results/{CONFIG_KEY}"
+OUTPUT_DIR = f"./sweep_results/{CONFIG_KEY}"
 
 run = wandb.init(
     entity="Uncertainty_Aware_Inference_Lab",
