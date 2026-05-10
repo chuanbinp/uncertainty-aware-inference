@@ -79,7 +79,7 @@ This project uses **Llama-2 13B** as the primary application model and evaluates
 **Headline result**   
 *Within-model calibration (Llama-2 13B):* Calibration was largely stable under quantization on HellaSwag, and GPTQ-INT4 was the most calibration-preserving 4-bit option for Llama-2 13B, improving ECE over FP16 on all three datasets while AWQ-INT4 and NF4 degraded calibration on PubMedQA.
 
-*Cross-model calibration:* Larger scale did not guarantee better calibration: no Llama-2 13B configuration was cross-model Pareto-optimal, and GPTQ emerged as the most consistently Pareto-efficient quantization family across throughput, accuracy, and ECE tradeoffs.
+*Cross-model calibration:* Larger scale did not guarantee better calibration. On HellaSwag, Llama-2 13B had the highest ECE values in the study and no configuration was Pareto-optimal, while smaller Llama-1 7B GPTQ variants achieved lower ECE and occupied the Pareto frontier. Although some Llama-2 13B configurations reached dataset-specific frontiers on TriviaQA and PubMedQA, they were not cross-model dominant. GPTQ emerged as the most consistently Pareto-efficient quantization family across throughput, accuracy, and ECE tradeoffs.
 
 *Uncertainty-based routing:* Confidence-based routing generally preserved FP16-level accuracy across model families, but the gains were small and practical savings were concentrated in specific Llama-1 7B GPTQ configurations
 
