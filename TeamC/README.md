@@ -11,7 +11,7 @@ To run the experiments, ensure you have:
    - Generate a token at [hf.co/settings/tokens](https://huggingface.co/settings/tokens)
    - Set environment variable: `export HF_TOKEN=hf_...` or add it to Colab Secrets
 
-2. **Weights & Biases Account**: Used for experiment tracking.
+2. **Weights & Biases Account**: Used for experiment tracking. [https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project/](https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project/)
    - Sign up at [wandb.ai](https://wandb.ai)
    - Login: `wandb login`
 
