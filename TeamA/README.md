@@ -149,21 +149,20 @@ python TeamA/run_eval_kd.py --config llama1-7b-nf4-kd --teacher-temp 4.0 --stude
 
 ### G. Quickstart: Reproduce the Headline Result
 
-The following reproduces the Llama-2 13B PubMedQA calibration improvement (approximately 3 hours on a single A100):
+The following reproduces the LLaMA-1 7B HellaSwag calibration improvement (approximately 2 hours on a single A100):
 
 ```bash
 # 1. Set up environment
 conda env create -f environment.yml && conda activate uncertainty_aware_env
-export HF_TOKEN=hf_...
 
 # 2. Run NF4 baseline
-python TeamA/run_eval_args.py --config llama2-13b-nf4 --datasets pubmedqa
+python TeamA/run_eval_args.py --config llama1-7b-nf4 --datasets hellaswag
 
-# 3. Run KD training at T=12
-python TeamA/kd_train.py --config llama2-13b-nf4-kd --temperature 12.0
+# 3. Run KD training at T=1
+python TeamA/kd_train.py --config llama1-7b-nf4-kd --temperature 1.0
 
 # 4. Evaluate KD model
-python TeamA/run_eval_kd.py --config llama2-13b-nf4-kd --temperature 12.0 --datasets pubmedqa
+python TeamA/run_eval_kd.py --config llama1-7b-nf4-kd --temperature 1.0 --datasets hellaswag
 ```
 
 ---
