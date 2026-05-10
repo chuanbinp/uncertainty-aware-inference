@@ -1,21 +1,26 @@
-# HPML Final Project: Uncertainty-Aware Inference - How Quantization Affects LLM Confidence Calibration
+# HPML Final Project: Uncertainty-Aware Inference — How Quantization Affects LLM Confidence Calibration
 
 > **Course:** High Performance Machine Learning (COMS 6998)
 > **Semester:** Spring 2026
 > **Instructor:** Dr. Kaoutar El Maghraoui
 
 ---
+
 ## Team Information
+
 - **Team Name:** Team 29 (Team B)
-- **Advisor / Mentor:** Ruchi Mahindru, Distinguished Engineer, IBM Research
+- **Advisor / Mentor:** Ruchi Muhindru, Distinguished Engineer, IBM Research
 - **Members:**
-   - **Anubha Vyasamudri** (av3329): calibration pipeline, PyTorch profiling, report, slides
-   - **Rohit Ramesh** (rr3713): CUDA/Nsight Compute profiling, Roofline analysis, report, slides
-   - **Sanjita Chandan Ballapur** (sb5216): calibration pipeline, PyTorch profiling, report, slides
-   - **Tamanna Ananna Haque** (ta2642): calibration evaluation, Nsight Compute profiling, report, slides
-   - **Vishal Menon** (vm2820): calibration evaluation, vLLM serving infrastructure, report, slides
+   - **Anubha Vyasamudri** (av3329) — calibration pipeline, PyTorch profiling, report, slides
+   - **Rohit Ramesh** (rr3713) — CUDA/Nsight Compute profiling, Roofline analysis, report, slides
+   - **Sanjita Chandan Ballapur** (sb5216) — calibration pipeline, PyTorch profiling, report, slides
+   - **Tamanna Ananna Haque** (ta2642) — calibration evaluation, Nsight Compute profiling, report, slides
+   - **Vishal Menon** (vm2820) — calibration evaluation, vLLM serving infrastructure, report, slides
+
 ---
+
 ## Submission
+
 - **GitHub repository:** [uncertainty-aware-inference](https://github.com/chuanbinp/uncertainty-aware-inference)
    - **Project subdirectory:** [`TeamB/`](https://github.com/chuanbinp/uncertainty-aware-inference/tree/master/TeamB)
 - **Final report:** [`deliverables/Team29_HPML_Final_Report.pdf`](deliverables/Team29_HPML_Final_Report.pdf)
