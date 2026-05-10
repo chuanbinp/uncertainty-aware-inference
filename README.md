@@ -8,8 +8,6 @@ This repository contains the evaluation framework, profiling tools, and analysis
 - **Distillation recovery analysis:** Quantitative results on whether KD can restore calibration quality across architectures, with analysis of which calibration properties are recoverable.
 - **Stretch (QAT vs. PTQ calibration comparison):** A comparison on Llama-2 7B, testing whether training-time quantization inherently preserves calibration better.
 - **Routing simulation results:** Projected cost savings and quality impact of uncertainty-based model routing, with threshold sensitivity analysis.
-- **Technical report (8–10 pages):** Structured for potential workshop submission (e.g., ICML Efficient Systems workshop, NeurIPS WANT workshop).
-- **Final presentation:** Includes a live demo of the calibration evaluation pipeline.
 
 ## Team Structure and Models
 The project is divided across three teams, each owning a specific model and a cross-cutting specialty:
@@ -27,36 +25,9 @@ conda env create -f environment.yml
 conda activate uncertainty_aware_env
 ```
 
-After collecting JSON result files, generate the Pareto analysis HTML with:
-```bash
-python TeamC/pareto_script.py ./updated_results
-```
-
 ### 2. Weights & Biases (W&B) Tracking
-[https://wandb.ai/sm5916-columbia-university/Uncertainty-Aware-Inference](https://wandb.ai/sm5916-columbia-university/Uncertainty-Aware-Inference)   
+[https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project](https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project)   
 Log experimental results to the shared W&B project. Ensure you are logged in:
 ```bash
 wandb login
-```
-When running your sweeps, consider the following fields:
-```bash
-config = {
-    "model": "llama2-7b | llama2-13b | mistral-7b",
-    "team": "team-a | team-b | team-c",
-    "quant_method": "fp16 | gptq | awq | bnb",
-    "precision": "fp16 | int8 | int4 | nf4",
-    "dataset": "triviaqa | arc | hellaswag | nq",
-    "split": "validation | test",
-    "seed": 42,
-}
-```
-
-Also ensure you log the following metrics:
-
-```bash
-wandb.log({
-    tokens_per_second,
-    accuracy,
-    ece
-})
 ```
