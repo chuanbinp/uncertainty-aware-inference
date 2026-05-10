@@ -254,6 +254,9 @@ If you build on this work, please cite:
 }
 ```
 
+### Blog post for extra credit
+[Medium Article](https://medium.com/@sm5916/why-confidence-calibration-matters-in-quantized-llm-routing-4ff2246c109a?postPublishedType=initial)
+
 ### Contact
 Email *[chuanbin.p@columbia.edu]*.
 
