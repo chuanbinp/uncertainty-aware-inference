@@ -18,8 +18,8 @@
 ## Submission
 
 - **GitHub repository:** [https://github.com/chuanbinp/uncertainty-aware-inference](https://github.com/chuanbinp/uncertainty-aware-inference)
-- **Final report:** [`TeamA/TeamA_HPML_Final_Report.pdf`](TeamA/TeamA_HPML_Final_Report.pdf)
-- **Final presentation:** [`TeamA/TeamA_HPML_Final_Presentation.pptx`](TeamA/TeamA_HPML_Final_Presentation.pdf)
+- **Final report:** [`TeamA/TeamA_HPML_Final_Report.pdf`](TeamA_HPML_Final_Report.pdf)
+- **Final presentation:** [`TeamA/TeamA_HPML_Final_Presentation.pptx`](TeamA_HPML_Final_Presentation.pdf)
 - **Experiment-tracking dashboard:** [https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project](https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project)
 
 The final report PDF and the presentation file are checked into the `TeamA/` folder of this repository **and** uploaded to CourseWorks.
@@ -70,17 +70,13 @@ Post-training quantization reduces LLM inference cost significantly — a 13B mo
 │   └── result_format.py        # Canonical result schema
 └── TeamA/
     ├── README.md               # This file
-    ├── RESULTS_SUMMARY.md      # Full numerical results for all configs
     ├── configs.py              # Model and KD registry
     ├── kd_train.py             # KD training script
     ├── run_eval.py             # Evaluation (hardcoded config)
     ├── run_eval_args.py        # Evaluation (CLI config)
     ├── run_eval_kd.py          # KD model evaluation
-    ├── run_kd.sh               # Full dual-temperature sweep (train + eval)
-    ├── test_kd.sh              # Smoke test (10 samples)
-    ├── run_all.sh              # Run all PTQ baseline configs sequentially
     ├── TeamA_HPML_Final_Report.pdf
-    ├── TeamA_HPML_Final_Presentation.pptx
+    ├── TeamA_HPML_Final_Presentation.pdf
     ├── ptq_1k/results/         # 1k-sample PTQ baseline results (matched to KD comparison)
     └── results/                # Results — JSON metrics and plots (adapters excluded)
         ├── llama1-7b-{fp16,nf4,gptq-int4,gptq-int8,awq-int4}/
