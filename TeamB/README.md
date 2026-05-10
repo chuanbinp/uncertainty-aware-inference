@@ -1,7 +1,9 @@
 # HPML Final Project: Uncertainty-Aware Inference — How Quantization Affects LLM Confidence Calibration
 
 > **Course:** High Performance Machine Learning (COMS 6998)
+>
 > **Semester:** Spring 2026
+>
 > **Instructor:** Dr. Kaoutar El Maghraoui
 
 ---
