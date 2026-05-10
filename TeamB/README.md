@@ -1,4 +1,4 @@
-# HPML Final Project: Uncertainty-Aware Inference — How Quantization Affects LLM Confidence Calibration
+# HPML Final Project: Uncertainty-Aware Inference - How Quantization Affects LLM Confidence Calibration
 
 > **Course:** High Performance Machine Learning (COMS 6998)
 > **Semester:** Spring 2026
@@ -9,7 +9,7 @@
 - **Advisor / Mentor:** Ruchi Mahindru, Distinguished Engineer, IBM Research
 - **Members:**
    - **Anubha Vyasamudri** (av3329) — calibration pipeline, PyTorch profiling, report, slides
-   - **Rohit Ramesh** (rr3713) — CUDA/Nsight Compute profiling, Roofline analysis, vLLM serving, report, slides
+   - **Rohit Ramesh** (rr3713) — CUDA/Nsight Compute profiling, Roofline analysis, report, slides
    - **Sanjita Chandan Ballapur** (sb5216) — calibration pipeline, PyTorch profiling, report, slides
    - **Tamanna Ananna Haque** (ta2642) — calibration evaluation, Nsight Compute profiling, report, slides
    - **Vishal Menon** (vm2820) — calibration evaluation, vLLM serving infrastructure, report, slides
@@ -334,7 +334,7 @@ If you build on this work, please cite:
 ```
 
 ### Medium Article for Extra Credit
-[https://medium.com/@rohitramesh4547/why-the-quantization-kernel-matters-more-than-the-bit-width-def5a71a642f](Why the Quantization Kernel Matters More Than the Bit-Width)
+[Why the Quantization Kernel Matters More Than the Bit-Width](https://medium.com/@rohitramesh4547/why-the-quantization-kernel-matters-more-than-the-bit-width-def5a71a642f)
 
 ### Contact
 Open a GitHub Issue or email *[rr3713@columbia.edu](mailto:rr3713@columbia.edu)*.
