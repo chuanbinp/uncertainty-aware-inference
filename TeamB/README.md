@@ -297,7 +297,7 @@ print(f'Speedup:   {ratio:.2f}x')
 - **NF4 is calibration-conservative but throughput-constrained.** The only configuration where ECE, MCE, Brier, and entropy all remain close to FP16 on PubMedQA — at the cost of 0.09× vLLM throughput.
 - **What did not work.** Knowledge distillation (FP16 teacher → NF4 student) at T≥2 causes MCE explosion even as ECE appears to improve. At T≥4 accuracy collapses entirely. Confidence-threshold routing for Mistral-7B produces negative cost savings at batch=1 because kernel overhead exceeds the memory saving.
 
-![Roofline — Mistral-7B on NVIDIA L4](nsight_profiler_results/roofline_comparison.png)
+![Roofline — Mistral-7B on NVIDIA L4](nsight_profiler_results/roofline_vis.png)
 
 ---
 
