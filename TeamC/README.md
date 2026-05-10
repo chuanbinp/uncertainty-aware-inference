@@ -195,7 +195,7 @@ python TeamC/routing_simulation.py
 - **GPTQ-INT4 emerged as the strongest 4-bit option for Llama-2 13B** because it was the most calibration-preserving low-bit configuration, improving ECE over the FP16 baseline on all three datasets while also delivering higher throughput. 
 - **HellaSwag was effectively quantization-invariant at the 13B scale**, with calibration remaining stable across all tested configurations and ECE staying in a narrow band from 0.327 to 0.332. 
 - **AWQ-INT4 and NF4 were less robust for calibration preservation on Llama-2 13B**, particularly on PubMedQA, where both methods increased ECE relative to FP16 despite similar accuracy. 
-- **Bigger models were not automatically better calibrated**, as no Llama-2 13B configuration was cross-model Pareto-optimal
+- **Bigger models were not automatically better calibrated**, as no Llama-2 13B configuration was cross-model Pareto-optimal for all datasets
 - **GPTQ was the most consistently Pareto-efficient quantization family** across throughput, accuracy, and ECE tradeoffs. 
 - **Uncertainty-aware routing preserved FP16-level accuracy but produced limited practical gains**, with only small accuracy improvements across model families and meaningful cost savings concentrated in specific Llama-1 7B GPTQ configurations. 
 - **Routing was beneficial only when the systems stack favored the quantized path**, reinforcing that deployment wins depend not just on calibration quality but also on whether quantized serving is actually faster than the FP16 baseline.
