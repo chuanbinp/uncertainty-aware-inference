@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Large binary / model files
+# NSight Compute raw reports (large binary — commit only *_metrics.csv)
+*.ncu-rep
+
+# PyTorch tensors and checkpoints (large — commit only *_profile.json summaries)
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Chrome profiler traces (large JSON — use perfetto.dev to view)
+*_chrome.json
+
+# Results archives
+*.tar.gz
+*.zip
+
+# HuggingFace cache 
+.cache/
+huggingface/
+
+# OS junk 
+.DS_Store
+__MACOSX/
+Thumbs.db
+*.swp
+*~
+
+# W&B local artifacts
+wandb/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
