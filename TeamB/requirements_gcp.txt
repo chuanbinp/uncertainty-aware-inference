@@ -1,0 +1,53 @@
+# requirements_gcp.txt
+# GCP L4 environment for ncu kernel-level profiling (uai conda env)
+# Hardware: NVIDIA L4 24 GB, CUDA 12.4, Python 3.11
+# Install: pip install -r requirements_gcp.txt --break-system-packages
+# Or restore full env: conda env create -f environment_uai.yml && conda activate uai
+#
+# Key difference from requirements.txt (A100/Colab):
+#   - torch==2.6.0+cu124 (CUDA 12.4 build for L4)
+#   - auto-gptq==0.7.1 (auto_gptq, not gptqmodel)
+#   - transformers==4.51.3 (stable, not dev build)
+
+# Core ML
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+torchaudio==2.6.0+cu124
+
+# Transformers stack
+transformers==4.51.3
+tokenizers==0.21.0
+huggingface-hub==0.30.2
+accelerate==1.3.0
+safetensors==0.4.3
+sentencepiece==0.2.0
+
+# Quantization
+auto-gptq==0.7.1
+autoawq==0.2.9
+bitsandbytes==0.45.0
+optimum==1.24.0
+
+# Evaluation
+datasets==2.19.1
+evaluate==0.4.1
+
+# Calibration metrics
+netcal==1.3.5
+scikit-learn==1.4.2
+scipy==1.13.0
+
+# Profiling + plotting
+matplotlib==3.8.4
+numpy==1.26.4
+pandas==2.2.2
+nvtx==0.2.10
+
+# Experiment tracking
+wandb==0.17.0
+
+# Utilities
+tqdm==4.66.2
+psutil==5.9.8
+python-dotenv==1.0.1
+requests==2.31.0
