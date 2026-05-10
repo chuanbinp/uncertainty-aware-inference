@@ -10,8 +10,8 @@
 - **Members:**
    - **Yechan Jeon** (yj2910) — routing simulation, scripting, report, slides
    - **Chuan Bin Phoe** (cp3451) — experiment scripts, pareto dashboard scripts, report, slides
-   - **Samuel Lee** (sl5806) — experiments runs, scripting, report, slides
-   - **Sanket Makkar** (sm5916) — experiment runs, report, slides
+   - **Samuel Lee** (sl5806) — experiment runs, scripting, report, slides
+   - **Sanket Makkar** (sm5916) — experiment runs, report, slides, blog post
 ---
 ## Submission
 - **GitHub repository:** [uncertainty-aware-inference](https://github.com/chuanbinp/uncertainty-aware-inference)
@@ -19,6 +19,7 @@
 - **Final report:** [deliverables/17_HPML_Final_Report.pdf](https://github.com/chuanbinp/uncertainty-aware-inference/tree/master/TeamC/deliverables/17_HPML_Final_Report.pdf)
 - **Final presentation:** [deliverables/presentation.pdf](https://github.com/chuanbinp/uncertainty-aware-inference/tree/master/TeamC/deliverables/presentation.pdf)
 - **Experiment-tracking dashboard:** [Weights & Biases dashboard](https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project/) [Pareto dashboard](https://chuanbinp.github.io/uncertainty-aware-inference/TeamC/analysis_results/pareto/pareto_comparison.html)
+- **Blog Post (extra credit):** [Blog Post](https://medium.com/@sm5916/why-confidence-calibration-matters-in-quantized-llm-routing-4ff2246c109a)
 
 The final report and presentation are included in the repository deliverables and were also submitted through CourseWorks.
 
@@ -38,10 +39,24 @@ This project uses **Llama-2 13B** as the primary application model and evaluates
   - **GPTQ-INT4** — 4-bit GPTQ quantized configuration.
   - **AWQ-INT4** — 4-bit AWQ quantized configuration.
   - **NF4** — 4-bit NF4 configuration using bitsandbytes.
+
+
 - **Datasets:**
-  - **HellaSwag** — commonsense multiple-choice QA with 10,042 examples.
-  - **TriviaQA** — factual QA with 17,944 examples.
-  - **PubMedQA** — biomedical QA / out-of-distribution benchmark with 1,000 examples.
+  - **Name:** HellaSwag  
+    **Size:** 10,042 examples from the validation split  
+    **License:** MIT License  
+    **Link:** [official site](https://rowanzellers.com/hellaswag/) / [GitHub](https://github.com/rowanz/hellaswag)
+
+  - **Name:** TriviaQA  
+    **Size:** 17,944 examples  
+    **License:** Apache License 2.0  
+    **Link:** [official site](https://nlp.cs.washington.edu/triviaqa/) / [GitHub](https://github.com/mandarjoshi90/triviaqa)
+
+  - **Name:** PubMedQA  
+    **Size:** 1,000 expert-labeled examples  
+    **License:** MIT License  
+    **Link:** [official site](https://pubmedqa.github.io/) / [GitHub](https://github.com/pubmedqa/pubmedqa)
+
 - **Custom modifications:** The project keeps the underlying model architecture unchanged and instead extends the evaluation pipeline to capture answer-position confidence, compute calibration metrics such as ECE, MCE, Brier score, and entropy, save per-example tensors, generate Pareto frontier analyses, and simulate uncertainty-aware routing.
 - **Hardware target:** Single NVIDIA A100 40GB GPU on Google Colab, batch size 1, seed 42
 ---
@@ -81,7 +96,7 @@ This project uses **Llama-2 13B** as the primary application model and evaluates
 
 *Cross-model calibration:* Larger scale did not guarantee better calibration. On HellaSwag, Llama-2 13B had the highest ECE values in the study and no configuration was Pareto-optimal, while smaller Llama-1 7B GPTQ variants achieved lower ECE and occupied the Pareto frontier. Although some Llama-2 13B configurations reached dataset-specific frontiers on TriviaQA and PubMedQA, they were not cross-model dominant. GPTQ emerged as the most consistently Pareto-efficient quantization family across throughput, accuracy, and ECE tradeoffs.
 
-*Uncertainty-based routing:* Confidence-based routing generally preserved FP16-level accuracy across model families, but the gains were small and practical savings were concentrated in specific Llama-1 7B GPTQ configurations
+*Uncertainty-based routing:* Confidence-based routing generally preserved FP16-level accuracy across model families, but the gains were small and practical savings were concentrated in specific Llama-1 7B GPTQ configurations.
 
 ## 4. Repository Structure
 ```text
@@ -202,7 +217,7 @@ python TeamC/routing_simulation.py
 ---
 
 ## 7. Notes
-- Team C focuses on running calibration sweeps for *Llama-2 13B*, cross-model evaluations, pareto-analysis and uncertainty-aware routing strategies for quantized language models, while the broader report also uses Team A’s Llama-1 7B and Team B’s Mistral-7B results.
+- Team C focuses on running calibration sweeps for *Llama-2 13B*, cross-model evaluations, Pareto analysis, and uncertainty-aware routing strategies for quantized language models, while the broader report also uses Team A’s Llama-1 7B and Team B’s Mistral-7B results.
 - All secrets (API keys, Wandb tokens) are loaded from environment variables. To run the experiments, make sure the following are available:
 1. **Hugging Face account and access token**: Required for accessing gated Llama-2 checkpoints used in the FP16 and some quantized evaluation flows. 
    - Sign up at [huggingface.co](https://huggingface.co)
@@ -258,7 +273,7 @@ If you build on this work, please cite:
 [Medium Article](https://medium.com/@sm5916/why-confidence-calibration-matters-in-quantized-llm-routing-4ff2246c109a?postPublishedType=initial)
 
 ### Contact
-Email *[chuanbin.p@columbia.edu]*.
+Open a GitHub Issue or email *[chuanbin.p@columbia.edu](mailto:chuanbin.p@columbia.edu)*.
 
 ---
 *HPML Spring 2026 — Dr. Kaoutar El Maghraoui — Columbia University*
