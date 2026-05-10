@@ -293,7 +293,7 @@ All numerical results are committed under `TeamB/calibration_results/`, `TeamB/v
 
 **Specific purpose:** Debugging CUDA permission errors; fixing package conflicts that arose during execution due to circular dependencies; generating boilerplate code structure for profiling.
 
-**Sections affected:** `TeamB/ncu_fp16.py` initial setup, `TeamB/colab_notebooks/mistral_7b_calibration.ipynb` initial setup.
+**Sections affected:** `TeamB/ncu_fp16.py` initial setup, `TeamB/colab_notebooks/teamb_profiler.ipynb` initial setup.
 
 **How we verified correctness:** All reported experimental results (ECE, MCE, Brier score, tok/s, SM%, AI FLOPs/B) were produced by running scripts independently on the target hardware and confirmed against raw JSON outputs in `calibration_results/`, `vllm_results/`, `pytorch_profiler_results/`, and `nsight_profiler_results/`. All profiler-trace interpretations were confirmed against raw `.ncu-rep` files opened in the NVIDIA Nsight Compute GUI. No AI tool generated any numerical result or profiling interpretation.
 
