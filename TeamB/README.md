@@ -334,7 +334,7 @@ If you build on this work, please cite:
 ```
 
 ### Medium Article for Extra Credit
-*[https://medium.com/@rohitramesh4547/why-the-quantization-kernel-matters-more-than-the-bit-width-def5a71a642f](Why the Quantization Kernel Matters More Than the Bit-Width)*
+[https://medium.com/@rohitramesh4547/why-the-quantization-kernel-matters-more-than-the-bit-width-def5a71a642f](Why the Quantization Kernel Matters More Than the Bit-Width)
 
 ### Contact
 Open a GitHub Issue or email *[rr3713@columbia.edu](mailto:rr3713@columbia.edu)*.
