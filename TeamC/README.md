@@ -8,10 +8,10 @@
 - **Team Name:** Team 17 (Team C of this project)
 - **Advisor / Mentor:** Dr. Ruchi Mahindru, IBM Research
 - **Members:**
-   - **Yechan Jeon** (yj2910) — routing simulation, report, slides
+   - **Yechan Jeon** (yj2910) — routing simulation, scripting, report, slides
    - **Chuan Bin Phoe** (cp3451) — experiment scripts, pareto dashboard scripts, report, slides
-   - **Samuel Lee** (sl5806) — experiments runs, report, slides
-   - **Sanket Makkar** (sm5916) — experiment runs, slides
+   - **Samuel Lee** (sl5806) — experiments runs, scripting, report, slides
+   - **Sanket Makkar** (sm5916) — experiment runs, report, slides
 ---
 ## Submission
 - **GitHub repository:** [uncertainty-aware-inference](https://github.com/chuanbinp/uncertainty-aware-inference)
