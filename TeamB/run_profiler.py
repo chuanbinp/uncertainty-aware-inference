@@ -234,9 +234,9 @@ def load_model_for_profiling(config_key: str):
 
     elif quant_type == "gptq":
         try:
-        from auto_gptq import AutoGPTQForCausalLM as GPTQModel
-    except ImportError:
-        from auto_gptq import AutoGPTQForCausalLM as GPTQModel
+            from auto_gptq import AutoGPTQForCausalLM as GPTQModel
+        except ImportError:
+            from auto_gptq import AutoGPTQForCausalLM as GPTQModel
         revision = cfg.get("gptq_revision", "main")
         logger.info(f"  GPTQ revision: {revision}")
         model = AutoGPTQForCausalLM.from_quantized(

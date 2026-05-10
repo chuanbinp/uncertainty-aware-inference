@@ -32,7 +32,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, )
 tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID, torch_dtype=torch.float16,
-    device_map="cuda:0", ,
+    device_map="cuda:0",
 )
 model.eval()
 print(f"[load] Done in {time.perf_counter()-t0:.1f}s  |  GPU mem: {torch.cuda.memory_allocated()/1e9:.1f} GB")
