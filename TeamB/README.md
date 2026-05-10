@@ -10,11 +10,11 @@
 
 - **Team Name:** Team 29 (Team B)
 - **Members:**
-  - Anubha Vyasamudri (av3329) - *calibration pipeline, knowledge distillation experiments*
-  - Rohit Ramesh (rr3713) - *CUDA/Nsight Compute profiling, Roofline analysis, vLLM serving infrastructure*
-  - Sanjita Chandan Ballapur (sb5216) - *calibration evaluation, systems analysis*
-  - Tamanna Ananna Haque (ta2642) - *calibration evaluation, knowledge distillation*
-  - Vishal Menon (vm2820) - *cross-model Pareto analysis, routing simulation, report structure*
+  - Anubha Vyasamudri (av3329) - *calibration pipeline, Pytorch profiling, report/ppt structure*
+  - Rohit Ramesh (rr3713) - *CUDA/Nsight Compute profiling, Roofline analysis, report/ppt structure*
+  - Sanjita Chandan Ballapur (sb5216) - *calibration pipeline, Pytorch profiling, report/ppt structure*
+  - Tamanna Ananna Haque (ta2642) - *calibration evaluation, CUDA/Nsight Compute profiling, report/ppt structure*
+  - Vishal Menon (vm2820) - *calibration evaluation, vLLM serving infrastructure, report/ppt structure*
 
 ## Submission
 
@@ -57,9 +57,9 @@ Post-training quantization (PTQ) reduces LLM inference cost substantially, as a 
 
 † AWQ INT4 ECE improvement on PubMedQA is a confidence redistribution artefact, not a genuine calibration gain as MCE simultaneously triples from 0.330 to 0.939.
 
-**Hardware:** 1× NVIDIA L4 24 GB GDDR6, CUDA 12.4, PyTorch 2.6.0, Ubuntu 22.04 (profiling); 1× NVIDIA A100 80 GB SXM, CUDA 12.8, PyTorch 2.12.0.dev, Ubuntu 22.04 (calibration + vLLM).
+**Hardware:** 1× NVIDIA A100 80 GB SXM, CUDA 12.8, PyTorch 2.12.0.dev, Ubuntu 22.04 (calibration + vLLM); 1× NVIDIA L4 24 GB GDDR6, CUDA 12.4, PyTorch 2.6.0, Ubuntu 22.04 (profiling).
 
-**Headline result (one sentence):** *GPTQ INT4 with the Marlin kernel delivers 1.78× vLLM throughput and 71% memory reduction vs. FP16 on NVIDIA L4, shifts inference from memory-bound (SM=52%, AI=243 FLOPs/B) to compute-bound (SM=82%, AI=951 FLOPs/B), and incurs less than 1% accuracy degradation on in-distribution tasks, making it the Pareto-dominant PTQ configuration for Mistral-7B across efficiency, accuracy, and calibration.*
+**Headline result (one sentence):** *GPTQ INT4 with the Marlin kernel delivers 1.78× vLLM throughput and 71% memory reduction vs. FP16, shifts inference from memory-bound (SM=52%, AI=243 FLOPs/B) to compute-bound (SM=82%, AI=951 FLOPs/B), and incurs less than 1% accuracy degradation on in-distribution tasks, making it the Pareto-dominant PTQ configuration for Mistral-7B across efficiency, accuracy, and calibration.*
 
 ---
 
@@ -70,7 +70,7 @@ Post-training quantization (PTQ) reduces LLM inference cost substantially, as a 
 ├── README.md
 ├── LICENSE
 ├── requirements.txt               # pip packages - A100/Colab calibration env
-├── requirements_gcp.txt           # pip packages - GCP L4 ncu profiling env (uai conda)
+├── requirements_gcp.txt           # pip packages - GCP L4 ncu profiling env 
 ├── environment_uai.yml            # Full conda env export for exact L4 reproduction
 ├── setup_gcp_l4.sh                # One-shot GCP L4 environment setup script
 ├── .env.example                   # Template for HF_TOKEN and WANDB_API_KEY
@@ -291,11 +291,11 @@ All numerical results are committed under `TeamB/calibration_results/`, `TeamB/v
 
 **Tool(s) used:** Claude (Anthropic)
 
-**Specific purpose:** Debugging CUDA permission errors (`perf_event_paranoid`, sudo ncu lock file conflicts); fixing ncu command syntax and `launch-skip` parameter tuning per kernel family; generating boilerplate structure for ncu profiling scripts (`ncu_*.py`); generating roofline plot scaffolding (`plot_ncu_roofline.py`); polishing prose in the report introduction and discussion sections.
+**Specific purpose:** Debugging CUDA permission errors; fixing package conflicts that arose during execution due to circular dependencies; generating boilerplate code structure for profiling.
 
-**Sections affected:** `TeamB/ncu_*.py` initial setup, `TeamB/llama_workspace/ncu_*.py` initial setup, `TeamB/plot_ncu_roofline.py` scaffold, report §I Introduction prose, report §V Discussion prose, this README.
+**Sections affected:** `TeamB/ncu_*.py` initial setup, `TeamB/colab_notebooks/mistral_7b_calibration.ipynb` initial setup.
 
-**How we verified correctness:** All reported experimental results (ECE, MCE, Brier score, tok/s, SM%, AI FLOPs/B) were produced by running scripts independently on the target hardware and confirmed against raw JSON outputs in `calibration_results/`, `vllm_results/`, and `pytorch_profiler_results/`. All profiler-trace interpretations were confirmed against raw `.ncu-rep` files opened in the NVIDIA Nsight Compute GUI. No AI tool generated any numerical result or profiling interpretation.
+**How we verified correctness:** All reported experimental results (ECE, MCE, Brier score, tok/s, SM%, AI FLOPs/B) were produced by running scripts independently on the target hardware and confirmed against raw JSON outputs in `calibration_results/`, `vllm_results/`, `pytorch_profiler_results/`, and `nsight_profiler_results/`. All profiler-trace interpretations were confirmed against raw `.ncu-rep` files opened in the NVIDIA Nsight Compute GUI. No AI tool generated any numerical result or profiling interpretation.
 
 By submitting this project, the team confirms that the analysis, interpretations, and conclusions are our own, and that any AI assistance is fully disclosed above. The same disclosure block appears as an appendix in the final report.
 
