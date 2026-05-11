@@ -139,24 +139,24 @@ TeamB/
 ## 5. Reproducibility Instructions
 ### A. Environment Setup
 1. **Clone the repository:**
-   ```bash
+ ```bash
    git clone https://github.com/chuanbinp/uncertainty-aware-inference.git
    cd uncertainty-aware-inference
-   ```
+ ```
 
 2. **For calibration evaluation and vLLM (Colab A100):**
-   ```bash
+ ```bash
    bash TeamB/setup_colab.sh
-   ```
+ ```
 
 3. **For ncu kernel profiling (GCP L4 VM):**
-   ```bash
+ ```bash
    bash TeamB/setup_gcp_l4.sh
    conda activate uai
    # Or restore the exact conda environment:
    conda env create -f TeamB/environment_uai.yml
    conda activate uai
-   ```
+ ```
 
 **System requirements:** Python 3.11, CUDA 12.4 (GCP L4 profiling) or CUDA 12.x (Colab calibration). FP16 inference requires ≥40 GB VRAM (A100 recommended). ncu profiling requires `perf_event_paranoid ≤ 0`. See `requirements.txt` and `requirements_gcp.txt` for pinned package versions.
 
@@ -165,6 +165,7 @@ Public experiment-tracking dashboard with calibration metrics, vLLM throughput, 
 
 1. **W&B Dashboard:** [https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project](https://wandb.ai/Uncertainty_Aware_Inference_Lab/UAI_Project)
 > *Platform used:* Weights & Biases
+>
 
 ### C. Dataset
 Datasets are downloaded automatically on first run via HuggingFace Datasets — no manual download required:
@@ -193,7 +194,7 @@ python TeamB/run_eval.py --config mistral-7b-awq-int4 --samples 200
 Supported config keys are defined in `configs.py`. Results per config: `{dataset}_results.json` containing ECE, MCE, Brier score, average entropy, and per-sample predictions. Full sweep can also be run via `colab_notebooks/mistral_7b_calibration.ipynb`.
 
 ### E. vLLM Throughput Benchmarking
-Benchmark tokens/second under batched vLLM serving. Each config runs in a subprocess for clean GPU state. NF4 falls back to HuggingFace batched generation automatically.
+Benchmark tokens/second under batched vLLM serving. Each config runs in a subprocess for a clean GPU state. NF4 falls back to HuggingFace batched generation automatically.
 
 ```bash
 python TeamB/run_vllm.py --config mistral-7b-fp16      --output-dir TeamB/vllm_results
@@ -220,7 +221,7 @@ python TeamB/run_profiler.py --all --force
 
 # With W&B logging
 python TeamB/run_profiler.py --config mistral-7b-fp16 \
-    --wandb-project UAI_Project \
+ --wandb-project UAI_Project \
     --wandb-entity Uncertainty_Aware_Inference_Lab
 ```
 
@@ -236,29 +237,30 @@ export HF_TOKEN=hf_your_token_here
 # Mistral-7B — single config example (FP16)
 sudo rm -f /tmp/nsight-compute-lock
 sudo -E /usr/local/cuda/bin/ncu \
-    -o TeamB/nsight_profiler_results/ncu/mistral_fp16 \
+ -o TeamB/nsight_profiler_results/ncu/mistral_fp16 \
     --metrics gpu__time_duration.sum,dram__bytes.sum,sm__inst_executed_pipe_tensor.sum,\
 smsp__sass_thread_inst_executed_op_ffma_pred_on.sum,\
 sm__throughput.avg.pct_of_peak_sustained_elapsed,\
 gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed \
-    --launch-skip 30 --launch-count 20 \
+ --launch-skip 30 --launch-count 20 \
     --kernel-name "regex:ampere_fp16_s16816gemm|fmha_cutlassF" \
-    --force-overwrite \
+ --force-overwrite \
     ~/miniconda3/envs/uai/bin/python TeamB/ncu_fp16.py
 
 # Extract CSV from .ncu-rep
 /usr/local/cuda/bin/ncu --import TeamB/nsight_profiler_results/ncu/mistral_fp16.ncu-rep \
-    --csv --print-units base 2>/dev/null \
-    > TeamB/nsight_profiler_results/ncu/mistral_fp16_metrics.csv
+ --csv --print-units base 2>/dev/null \
+ > TeamB/nsight_profiler_results/ncu/mistral_fp16_metrics.csv
+ >
 
 # LLaMA-1 7B and LLaMA-2 13B sweep (all 9 configs)
 cd TeamB/llama_workspace && bash run_llama_ncu.sh
 
 # Generate Roofline plots from CSV
 python TeamB/plot_ncu_roofline.py \
-    --csv TeamB/nsight_profiler_results/ncu/mistral_fp16_metrics.csv \
+ --csv TeamB/nsight_profiler_results/ncu/mistral_fp16_metrics.csv \
           TeamB/nsight_profiler_results/ncu/mistral_gptq_int4_metrics.csv \
-    --label "FP16" "GPTQ INT4 (Marlin)" \
+ --label "FP16" "GPTQ INT4 (Marlin)" \
     --out TeamB/nsight_profiler_results/roofline_comparison.png
 ```
 
@@ -293,9 +295,9 @@ print(f'Speedup:   {ratio:.2f}x')
 - **Kernel implementation determines hardware efficiency, not bit-width.** GPTQ INT4 (Marlin) is compute-bound (SM=82%, AI=951 FLOPs/B) and delivers 1.78× vLLM throughput. GPTQ INT8 with the exllama kernel regresses to 0.47× FP16 despite being a smaller model — different kernel, opposite outcome.
 - **19× arithmetic intensity gap at identical 4-bit precision.** NF4 (AI=388 FLOPs/B, two-step kDequantize+GEMM) vs. AWQ INT4 (AI=1,865 FLOPs/B, fused awq\_gemm kernel). Same bit-width, entirely different hardware regimes.
 - **AWQ paradox.** AWQ INT4 achieves the highest arithmetic intensity of any config (1,865 FLOPs/B) but only 207 tok/s under vLLM. The fused GEMV kernel is optimised for single-batch prefill, not continuous batched decode — throughput collapses at batch size 10.
-- **ECE alone is insufficient on OOD data.** On PubMedQA, AWQ INT4 ECE drops to 0.067 (vs FP16's 0.229) while MCE triples to 0.939. Quantization spreads confidence uniformly, reducing average bin error while catastrophically miscalibrating the worst-case bin.
+- **ECE alone is insufficient for OOD data.** On PubMedQA, AWQ INT4 ECE drops to 0.067 (vs FP16's 0.229) while MCE triples to 0.939. Quantization spreads confidence uniformly, reducing average bin error while catastrophically miscalibrating the worst-case bin.
 - **NF4 is calibration-conservative but throughput-constrained.** The only configuration where ECE, MCE, Brier, and entropy all remain close to FP16 on PubMedQA — at the cost of 0.09× vLLM throughput.
-- **What did not work.** Knowledge distillation (FP16 teacher → NF4 student) at T≥2 causes MCE explosion even as ECE appears to improve. At T≥4 accuracy collapses entirely. Confidence-threshold routing for Mistral-7B produces negative cost savings at batch=1 because kernel overhead exceeds the memory saving.
+- **What did not work.** Knowledge distillation (FP16 teacher → NF4 student) at T≥2 causes MCE explosion even as ECE appears to improve. At T≥4, accuracy collapses entirely. Confidence-threshold routing for Mistral-7B produces negative cost savings at batch=1 because kernel overhead exceeds the memory saving.
 
 ![Roofline — Mistral-7B on NVIDIA L4](nsight_profiler_results/roofline_vis.png)
 
@@ -317,13 +319,13 @@ print(f'Speedup:   {ratio:.2f}x')
 
 **Tool(s) used:** Claude (Anthropic)
 
-**Specific purpose:** AI-assisted toold were used in limited capacity; Debugging CUDA permission errors; fixing package conflicts that arose during execution due to circular dependencies; proofreading and polishing prose in the report once fully written by the team.
+**Specific purpose:** AI-assisted tools were used in a limited capacity; Debugging CUDA permission errors; fixing package conflicts that arose during execution due to circular dependencies; proofreading and polishing prose in the report once fully written by the team.
 
 **Sections affected:** Profiling ⁠initial setup to translate between A100 and L4, written presentation material.
 
-**How we verified correctness:** All reported experimental results were produced by running scripts independently on the target hardware and confirmed against raw JSON outputs in `calibration_results/`, `vllm_results/`, `pytorch_profiler_results/`, and `nsight_profiler_results/`. All profiler-trace interpretations were confirmed against raw `.ncu-rep` files opened in NVIDIA Nsight Compute GUI. No AI tool generated any numerical result or profiling interpretation. Authors conducted all the detailed analysis.
+**How we verified correctness:** All reported experimental results were produced by running scripts independently on the target hardware and confirmed against raw JSON outputs in `calibration_results/`, `vllm_results/`, `pytorch_profiler_results/`, and `nsight_profiler_results/`. All profiler-trace interpretations were confirmed against raw `.ncu-rep` files opened in NVIDIA Nsight Compute GUI. No AI tool generated any numerical result or profiling interpretation. The authors conducted all the detailed analyses.
 
-By submitting this project, the team confirms that the analysis, interpretations, and conclusions are our own, and that any AI assistance is fully disclosed above. The same disclosure block appears as an appendix in the final report.
+By submitting this project, the team confirms that the analysis, interpretations, and conclusions are our own and that any AI assistance is fully disclosed above. The same disclosure block appears as an appendix in the final report.
 
 ### License
 Released under the MIT License. See [`LICENSE`](LICENSE).
@@ -332,12 +334,12 @@ Released under the MIT License. See [`LICENSE`](LICENSE).
 If you build on this work, please cite:
 ```bibtex
 @misc{team29_2026_uai,
-  title  = {Uncertainty-Aware Inference: How Post-Training Quantization Affects LLM Confidence Calibration},
+  title = {Uncertainty-Aware Inference: How Post-Training Quantization Affects LLM Confidence Calibration},
   author = {Vyasamudri, Anubha and Ramesh, Rohit and Ballapur, Sanjita Chandan
-            and Haque, Tamanna Ananna and Menon, Vishal},
-  year   = {2026},
-  note   = {HPML Spring 2026 Final Project, Columbia University},
-  url    = {https://github.com/chuanbinp/uncertainty-aware-inference/tree/master/TeamB}
+ and Haque, Tamanna Ananna and Menon, Vishal},
+  year = {2026},
+  note = {HPML Spring 2026 Final Project, Columbia University},
+  url = {https://github.com/chuanbinp/uncertainty-aware-inference/tree/master/TeamB}
 }
 ```
 
